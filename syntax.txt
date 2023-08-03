@@ -1,0 +1,18 @@
+let x = 10
+let y = true
+let z = 1..31
+
+let f = \lst -> List.fold_left (+) 0 lst
+
+let is_empty = \lst ->
+  match lst with
+  | [] -> true
+  | _ -> false
+
+let result = if is_empty z then 10 else f z
+
+let result2 = match is_empty z with
+  | true -> 10
+  | false -> f z
+
+let () = if result = result2 then print "success!" else print "oops"

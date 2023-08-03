@@ -5,11 +5,13 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github zazed/zaml))
 
-(authors "Author Name")
+(using menhir 2.1)
 
-(maintainers "Maintainer Name")
+(authors "Leonardo Santos")
+
+(maintainers "Leonardo Santos")
 
 (license LICENSE)
 
@@ -17,10 +19,10 @@
 
 (package
  (name zaml)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Small OCaml inspired language")
+ (description "Small OCaml inspired language")
  (depends ocaml dune)
  (tags
-  (topics "to describe" your project)))
+  (OCaml "functional programming" language types "hindley-milner" "generalized hindley-milner")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
