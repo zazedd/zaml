@@ -58,7 +58,7 @@ let rec unify t1 t2 =
         unify_lev min_level t12 t22;
         ll.new_level <- min_level;
         lr.new_level <- min_level
-    | _ -> unify_error t1
+    | t1, t2 -> type_error t1 t2
 
 and unify_lev l t1 t2 =
   let t1 = head t1 in

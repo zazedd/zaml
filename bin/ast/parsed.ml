@@ -5,6 +5,7 @@ type t =
   | Int of int
   | Bool of bool
   | Var of variable
+  | If of t * t * t
   | Let of { name : variable; binding : t; in_body : t option }
   | Lambda of { vars : variable list; body : t }
   | Fun of {
