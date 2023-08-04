@@ -1,7 +1,6 @@
 open Common
 open Errors
 open Ast.Typed
-open Ast.Common
 
 (* The type environment Gamma *)
 module Ctx = Map.Make (String)
