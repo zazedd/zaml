@@ -24,7 +24,7 @@ rule read =
   | "if" { IF }
   | "then" { THEN }
   | "else" { ELSE }
-  | "\\" { FUN }
+  | "fun" { FUN }
   | "->" { ARROW }
   | ":" { COLON }
   | "int" { TINT }

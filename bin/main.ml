@@ -2,6 +2,8 @@ open Ast.Parsed
 open Ast.Typed
 open Parsing
 open Typing.Common
+open Typing.Errors
+open Typing.Env
 open Typing.Typecheck
 
 let parse s =
@@ -27,16 +29,18 @@ let parse s =
 (*       ^ match in_body with None -> "" | Some b -> string_of_ast b) *)
 (*   | App (e1, e2) -> "App = " ^ string_of_ast e1 ^ " and " ^ string_of_ast e2 *)
 
+let bold_string str = Format.sprintf "\027[1m%s\027[0m" str
+let blue_string str = Format.sprintf "\027[34m%s\027[0m" str
+
 let top_type_check exp =
-  let _ = parse "let x = 10" in
   reset_type_variables ();
   reset_level_adjustment ();
-  let ty = typeof [] exp in
+  let ty = typeof Ctx.empty exp in
   cycle_free ty;
   string_of_typ ty |> print_endline;
   ty
 
-let id = Lambda ("x", Var "x")
+let id = Lambda { vars = [ "x" ]; body = Var "x" }
 
 let () =
   assert (
@@ -45,3 +49,15 @@ let () =
         TVar { contents = Unbound ("'a", 1) },
         { old_level = 1; new_level = 1 } )
     = top_type_check id)
+
+let rec loop () =
+  bold_string "zaml" |> print_string;
+  blue_string " # " |> print_string;
+  let ast = read_line () |> parse |> List.hd in
+  let () =
+    try top_type_check ast |> ignore
+    with TypeError e -> print_endline ("Error: " ^ e)
+  in
+  loop ()
+
+let () = loop ()

@@ -48,33 +48,33 @@ prog:
   | e = expr+; EOF { e }
   ;
 
-expr:
-  | e = simple_expr { e }
-  (* | e1 = expr; PLUS; e2 = expr { Bop (Add, e1, e2) } *)
-  (* | e1 = expr; MULT; e2 = expr { Bop (Mult, e1, e2) } *)
-  (* | e1 = expr; EQ; e2 = expr { Bop (Eq, e1, e2) } *)
-  | LET; name = IDENT; var = IDENT; EQUALS; binding = expr; { Fun (name, var, binding, None) }
-  | LET; name = IDENT; var = IDENT; EQUALS; binding = expr; IN; body = expr { Fun (name, var, binding, Some body) }
-  | LET; name = IDENT; EQUALS; binding = expr; { Let (name, binding, None) }
-  | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr { Let (name, binding, Some body) }
-  (* | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr { If (b, e1, e2) } *)
-  | e = simple_expr; es = simple_expr+ { make_apply e es }
-  | FUN; vars = IDENT; ARROW; body = expr; { Lambda (vars, body) }
-  ;
-
 (* expr: *)
 (*   | e = simple_expr { e } *)
 (*   (* | e1 = expr; PLUS; e2 = expr { Bop (Add, e1, e2) } *) *)
 (*   (* | e1 = expr; MULT; e2 = expr { Bop (Mult, e1, e2) } *) *)
 (*   (* | e1 = expr; EQ; e2 = expr { Bop (Eq, e1, e2) } *) *)
-(*   | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; { Fun {name; vars; binding; in_body = None} } *)
-(*   | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; IN; body = expr { Fun {name; vars; binding; in_body = Some body} } *)
-(*   | LET; name = IDENT; EQUALS; binding = expr; { Let {name; binding; in_body = None} } *)
-(*   | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr { Let {name; binding; in_body = Some body} } *)
+(*   | LET; name = IDENT; var = IDENT; EQUALS; binding = expr; { Fun (name, var, binding, None) } *)
+(*   | LET; name = IDENT; var = IDENT; EQUALS; binding = expr; IN; body = expr { Fun (name, var, binding, Some body) } *)
+(*   | LET; name = IDENT; EQUALS; binding = expr; { Let (name, binding, None) } *)
+(*   | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr { Let (name, binding, Some body) } *)
 (*   (* | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr { If (b, e1, e2) } *) *)
 (*   | e = simple_expr; es = simple_expr+ { make_apply e es } *)
-(*   | FUN; vars = list(IDENT); ARROW; body = expr; { Lambda {vars; body} } *)
+(*   | FUN; vars = IDENT; ARROW; body = expr; { Lambda (vars, body) } *)
 (*   ; *)
+
+expr:
+  | e = simple_expr { e }
+  (* | e1 = expr; PLUS; e2 = expr { Bop (Add, e1, e2) } *)
+  (* | e1 = expr; MULT; e2 = expr { Bop (Mult, e1, e2) } *)
+  (* | e1 = expr; EQ; e2 = expr { Bop (Eq, e1, e2) } *)
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; { Fun {name; vars; binding; in_body = None} }
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; IN; body = expr { Fun {name; vars; binding; in_body = Some body} }
+  | LET; name = IDENT; EQUALS; binding = expr; { Let {name; binding; in_body = None} }
+  | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr { Let {name; binding; in_body = Some body} }
+  (* | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr { If (b, e1, e2) } *)
+  | e = simple_expr; es = simple_expr+ { make_apply e es }
+  | FUN; vars = list(IDENT); ARROW; body = expr; { Lambda {vars; body} }
+  ;
 
 simple_expr:
   | i = INT { Int i }

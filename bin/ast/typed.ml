@@ -18,7 +18,7 @@ and tvar = Unbound of variable * level | Link of typ
 and levels = { mutable new_level : level; mutable old_level : level }
 
 let rec string_of_typ = function
-  | TUnit -> "()"
+  | TUnit -> "unit"
   | TBool -> "bool"
   | TInt -> "int"
   | TArrow (t1, t2, _) ->

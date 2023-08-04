@@ -6,6 +6,8 @@ open Ast.Common
 (* The type environment *)
 type env = (variable * typ) list
 
+module Ctx = Map.Make (String)
+
 (*
   Sound generalization: Quantify free TVars with higher levels only from dead regions.
   Traverse parts with higher-level TVars.
@@ -61,22 +63,24 @@ let gen t =
   in
   loop t
 
-(* instantiation: replace schematic variables with fresh TVars.
+(*
+   instantiation: replace schematic variables with fresh TVars.
    Only the components at generic_level are traversed, since only
    those may contain quantified type variables.
 *)
-let inst =
-  let rec loop subst = function
+let inst t =
+  let rec loop ctx = function
     | TVar { contents = Unbound (name, l) } when l = generic_level -> (
-        try (List.assoc name subst, subst)
+        try (Ctx.find name ctx, ctx)
         with Not_found ->
           let var = newvar () in
-          (var, (name, var) :: subst))
-    | TVar { contents = Link t } -> loop subst t
+          let ctx' = Ctx.add name var ctx in
+          (var, ctx'))
+    | TVar { contents = Link t } -> loop ctx t
     | TArrow (t1, t2, ls) when ls.new_level = generic_level ->
-        let t1, subst = loop subst t1 in
+        let t1, subst = loop ctx t1 in
         let t2, subst = loop subst t2 in
         (new_arrow t1 t2, subst)
-    | t -> (t, subst)
+    | t -> (t, ctx)
   in
-  fun t -> loop [] t |> fst
+  loop Ctx.empty t |> fst

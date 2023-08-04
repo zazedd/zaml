@@ -1,4 +1,3 @@
-open Errors
 open Ast.Typed
 
 let to_be_level_adjusted : typ list ref = ref []
@@ -41,16 +40,3 @@ let newvar () = TVar (Unbound (genname (), !current_level) |> ref)
 
 let new_arrow t1 t2 =
   TArrow (t1, t2, { new_level = !current_level; old_level = !current_level })
-
-(* Delayed occurs check to prevent cyclic types. Runs at the end of the typecheck *)
-let rec cycle_free = function
-  | TInt | TUnit | TBool | TVar { contents = Unbound _ } -> ()
-  | TVar { contents = Link ty } -> cycle_free ty
-  | TArrow (_, _, ls) when ls.new_level = marked_level ->
-      occur_error "Variable occurs inside its definition"
-  | TArrow (t1, t2, ls) ->
-      let level = ls.new_level in
-      ls.new_level <- marked_level;
-      cycle_free t1;
-      cycle_free t2;
-      ls.new_level <- level
