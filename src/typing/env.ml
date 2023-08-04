@@ -3,9 +3,7 @@ open Errors
 open Ast.Typed
 open Ast.Common
 
-(* The type environment *)
-type env = (variable * typ) list
-
+(* The type environment Gamma *)
 module Ctx = Map.Make (String)
 
 (*
