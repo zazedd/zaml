@@ -2,7 +2,7 @@ open Typing.Env
 
 let handle_args () =
   match Array.length Sys.argv with
-  | 1 -> Repl.Cli.repl Ctx.empty
+  | 1 -> Repl.Cli.run Ctx.empty
   | 2 ->
       let _ = Sys.argv.(1) in
       assert false

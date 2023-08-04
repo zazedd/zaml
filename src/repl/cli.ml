@@ -10,7 +10,7 @@ let exit_repl str =
   str |> bold_string |> print_endline;
   exit 0
 
-let rec repl ctx =
+let rec run ctx =
   bold_string "zaml" |> print_string;
   blue_string " # " |> print_string;
   try
@@ -20,9 +20,9 @@ let rec repl ctx =
     | str ->
         let t, t_ctx = str |> parse |> List.hd |> type_check ctx in
         t |> string_of_typ |> print_endline;
-        repl t_ctx
+        run t_ctx
   with
   | End_of_file -> exit_repl "\nSee you later cowboy..."
   | TypeError e | OccurCheck e ->
       print_endline ("Error: " ^ e);
-      repl ctx
+      run ctx
