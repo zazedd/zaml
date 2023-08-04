@@ -1,3 +1,3 @@
 (library
- (name typechecker)
+ (name typing)
  (libraries ast))

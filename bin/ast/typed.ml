@@ -24,4 +24,4 @@ let rec string_of_typ = function
   | TArrow (t1, t2, _) ->
       Format.sprintf "%s -> %s" (string_of_typ t1) (string_of_typ t2)
   | TVar { contents = Link t; _ } -> string_of_typ t
-  | TVar _ -> "tvar"
+  | TVar { contents = Unbound (name, _); _ } -> name

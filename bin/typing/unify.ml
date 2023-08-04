@@ -1,4 +1,5 @@
 open Common
+open Errors
 open Ast.Typed
 
 (* Main unification *)
@@ -10,13 +11,12 @@ open Ast.Typed
   Works like a generational garbage collector.
 *)
 let update_level l = function
-  | TVar ({ contents = Unbound (n, l') } as tvr) ->
+  | TVar ({ contents = Unbound (n, l') } as var) ->
       assert (l' != generic_level);
-      if l < l' then tvr := Unbound (n, l)
+      if l < l' then var := Unbound (n, l)
   | TArrow (_, _, ls) as ty ->
       assert (ls.new_level != generic_level);
-      if ls.new_level = marked_level then
-        failwith "occurs check, loop encountered";
+      if ls.new_level = marked_level then occur_error "Loop encountered";
       if l < ls.new_level then (
         if ls.new_level = ls.old_level then
           to_be_level_adjusted := ty :: !to_be_level_adjusted;
@@ -38,29 +38,29 @@ let rec unify t1 t2 =
   else
     match (head t1, head t2) with
     (* unify two free vars *)
-    | ( (TVar ({ contents = Unbound (_, l1) } as tv1) as t1),
-        (TVar ({ contents = Unbound (_, l2) } as tv2) as t2) ) ->
-        if tv1 == tv2 then () (* the same variable *)
+    | ( (TVar ({ contents = Unbound (_, l1) } as var1) as t1),
+        (TVar ({ contents = Unbound (_, l2) } as var2) as t2) ) ->
+        if var1 == var2 then () (* the same variable *)
         else if (* bind the higher-level var *)
-                l1 > l2 then tv1 := Link t2
-        else tv2 := Link t1
-    | TVar ({ contents = Unbound (_, l) } as tv), t'
-    | t', TVar ({ contents = Unbound (_, l) } as tv) ->
+                l1 > l2 then var1 := Link t2
+        else var2 := Link t1
+    | TVar ({ contents = Unbound (_, l) } as var), t'
+    | t', TVar ({ contents = Unbound (_, l) } as var) ->
         update_level l t';
-        tv := Link t'
-    | TArrow (tyl1, tyl2, ll), TArrow (tyr1, tyr2, lr) ->
+        var := Link t'
+    | TArrow (t11, t12, ll), TArrow (t21, t22, lr) ->
         if ll.new_level = marked_level || lr.new_level = marked_level then
-          failwith "cycle: occurs check";
+          occur_error "Loop encountered";
         let min_level = min ll.new_level lr.new_level in
         ll.new_level <- marked_level;
         lr.new_level <- marked_level;
-        unify_lev min_level tyl1 tyr1;
-        unify_lev min_level tyl2 tyr2;
+        unify_lev min_level t11 t21;
+        unify_lev min_level t12 t22;
         ll.new_level <- min_level;
         lr.new_level <- min_level
-    | _ -> failwith "unification error"
+    | _ -> type_error t1 t2
 
-and unify_lev l ty1 ty2 =
-  let ty1 = head ty1 in
-  update_level l ty1;
-  unify ty1 ty2
+and unify_lev l t1 t2 =
+  let t1 = head t1 in
+  update_level l t1;
+  unify t1 t2
