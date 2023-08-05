@@ -1,6 +1,6 @@
 (library
  (name typing_test)
- (libraries typing)
+ (libraries parsing typing)
  (inline_tests)
  (preprocess
   (pps ppx_expect ppx_inline_test)))

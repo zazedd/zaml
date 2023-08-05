@@ -21,7 +21,9 @@ let rec string_of_typ = function
   | TUnit -> "unit"
   | TBool -> "bool"
   | TInt -> "int"
-  | TArrow (t1, t2, _) ->
-      Format.sprintf "%s -> %s" (string_of_typ t1) (string_of_typ t2)
-  | TVar { contents = Link t; _ } -> string_of_typ t
-  | TVar { contents = Unbound (name, _); _ } -> name
+  | TArrow (t1, t2, { new_level; old_level }) ->
+      Format.sprintf "%s -> %s (%s %s)" (string_of_typ t1) (string_of_typ t2)
+        (string_of_int new_level) (string_of_int old_level)
+  | TVar { contents = Link t; _ } -> "link" ^ string_of_typ t
+  | TVar { contents = Unbound (name, l); _ } ->
+      name ^ "level = " ^ string_of_int l

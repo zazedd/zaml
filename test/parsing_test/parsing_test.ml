@@ -38,6 +38,11 @@ let%test "bool variable" =
   | Let { name = "a"; binding = Bool false; in_body = None } -> true
   | _ -> false
 
+let%test "unit variable" =
+  match Parsing.Parse.parse "let a = ()" |> List.hd with
+  | Let { name = "a"; binding = Unit; in_body = None } -> true
+  | _ -> false
+
 let%test "let in" =
   match Parsing.Parse.parse "let a = 420 in a" |> List.hd with
   | Let { name = "a"; binding = Int 420; in_body = Some (Var "a") } -> true
