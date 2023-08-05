@@ -1,7 +1,0 @@
-(executable
- (name tests)
- (libraries parsing_test typing_test))
-
-(alias
- (name runtest)
- (deps tests.exe))
