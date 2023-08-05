@@ -1,5 +1,7 @@
 open Ast.Parsed
 
+let run () = ()
+
 let%test "unit" =
   match Parsing.Parse.parse "()" |> List.hd with Unit -> true | _ -> false
 

@@ -1,7 +1,7 @@
 open Ast.Typed
 open Typing.Env
 
-let generic_level = 100000000
+let run () = ()
 
 let%test "unit" =
   match
@@ -76,6 +76,16 @@ let%test "bool variable" =
     |> fst
   with
   | TBool -> true
+  | _ -> false
+
+let%test "unit variable" =
+  match
+    Parsing.Parse.parse "let a = ()"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst
+  with
+  | TUnit -> true
   | _ -> false
 
 let%test "let in" =
