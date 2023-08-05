@@ -6,14 +6,20 @@ OCaml inspired language
 
 - TODO
 
-## Building and Running
+## Running
+
+There are two options for running zaml:
+
+-> Running the REPL:
 
 ```bash
-dune build
-
-or
-
 dune exec zaml
+```
+
+-> Interpret from a `.zml` file:
+
+```bash
+dune exec zaml example.zml
 ```
 
 ## Testing
