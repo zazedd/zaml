@@ -5,7 +5,7 @@
 let white = [' ' '\t' '\n']+
 let digit = ['0'-'9']
 let int = '-'? digit+
-let letter = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '_' '0'-'9']*
+let letter = ['_' 'a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '_' '0'-'9']*
 let ident = letter+
 
 rule read =
