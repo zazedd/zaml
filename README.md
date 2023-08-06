@@ -30,43 +30,43 @@ dune runtest
 
 ## TODO list
 
-- [x] Typechecking
-- [] Evaluation
-- [] Language features
+- [x] Typechecking (Generalized Hindley-Milner (inspired by Didier Remy))
+- [ ] Evaluation
+- [ ] Language features
   - [x] Let variable expressions
-  - [] Let function expressions
+  - [ ] Let function expressions
     - [x] Implemented
-    - [] Multiple argumrnts
-  - [] Lambda expressions
+    - [ ] Multiple argumrnts
+  - [ ] Lambda expressions
     - [x] Implemented
-    - [] Multiple arguments
+    - [ ] Multiple arguments
   - [x] If expressions
-  - [] Match expressions
-  - [] Algebraic effects
-  - [] Ranges (1..31 -> [1; 2; ... 30; 31])
-  - [] Standard library
-    - [] Figure out what to include
-  - [] Binary operators
-    - [] Int ops
-      - [] +
-      - [] -
-      - [] *
-      - [] /
-      - [] %
-      - [] ==
-      - [] !=
-      - [] >, =>
-      - [] <  =<
-    - [] String op
-      - [] ^ (string concat)
-    - [] Bool ops
-      - [] !
-- [] Types
+  - [ ] Match expressions
+  - [ ] Algebraic effects
+  - [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
+  - [ ] Standard library
+    - [ ] Figure out what to include
+  - [ ] Binary operators
+    - [ ] Int ops
+      - [ ] +
+      - [ ] -
+      - [ ] *
+      - [ ] /
+      - [ ] %
+      - [ ] ==
+      - [ ] !=
+      - [ ] >, =>
+      - [ ] <  =<
+    - [ ] String op
+      - [ ] ^ (string concat)
+    - [ ] Bool ops
+      - [ ] !
+- [ ] Types
   - [x] Unit
   - [x] Int
   - [x] Bool
   - [x] TVar
   - [x] TArrow (x -> y)
-  - [] Strings
-  - [] 'a list
+  - [ ] Strings
+  - [ ] 'a list
   
