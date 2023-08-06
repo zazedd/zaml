@@ -51,3 +51,24 @@ let string_of_typ t =
         else t1_str ^ " -> " ^ t2_str
   in
   go (Bytes.of_string "'a") (Tbl.create 1) t
+
+(* let string_of_typ2 t = *)
+(*   let rec go current tbl = function *)
+(*     | TUnit -> "unit" *)
+(*     | TBool -> "bool" *)
+(*     | TInt -> "int" *)
+(*     | TVar { contents = Link t } -> "TVar link : " ^ go current tbl t *)
+(*     | TVar { contents = Unbound (n, _) } -> ( *)
+(*         match Tbl.find_opt tbl n with *)
+(*         | Some s -> "TVar Unbound : " ^ s *)
+(*         | None -> *)
+(*             let s = Bytes.to_string current in *)
+(*             Tbl.add tbl n s; *)
+(*             next_letter current; *)
+(*             "TVar Unbound : " ^ s) *)
+(*     | TArrow (t1, t2, _) -> *)
+(*         let t1_str = go current tbl t1 in *)
+(*         let t2_str = go current tbl t2 in *)
+(*         Format.sprintf "TArrow (%s, %s)" t1_str t2_str *)
+(*   in *)
+(*   go (Bytes.of_string "'a") (Tbl.create 1) t *)

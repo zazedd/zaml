@@ -82,7 +82,7 @@ and typeof_fun ctx name vars binding in_body =
   enter_level ();
   let t_e, _ = typeof ctx' binding in
   leave_level ();
-  let t = new_arrows ctx vars t_e in
+  let t = new_arrows ctx' vars t_e in
   let ctx'' = Ctx.add name t ctx' in
   match in_body with
   | None -> (t, ctx'')

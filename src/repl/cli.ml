@@ -23,7 +23,7 @@ let rec run ctx =
         let t_ctx =
           (List.fold_left (fun acc a ->
                let t', t_ctx' = a |> type_check acc in
-               "- : " ^ (t' |> string_of_typ) |> print_endline;
+               "- : " ^ string_of_typ t' |> print_endline;
                Ctx.merge (fun _ _ x -> x) acc t_ctx'))
             ctx ast
         in

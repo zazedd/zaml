@@ -109,6 +109,66 @@ let%test "apply" =
   | TVar { contents = Link TBool } -> true
   | _ -> false
 
+let%test "if1" =
+  match
+    Parsing.Parse.parse "fun a b c -> if a then b else c"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst |> string_of_typ
+  with
+  | "bool -> 'a -> 'a -> 'a" -> true
+  | _ -> false
+
+let%test "if2" =
+  match
+    Parsing.Parse.parse "fun a b -> if a then b else 1"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst |> string_of_typ
+  with
+  | "bool -> int -> int" -> true
+  | _ -> false
+
+let%test "if3" =
+  match
+    Parsing.Parse.parse "fun a b -> if a then false else b"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst |> string_of_typ
+  with
+  | "bool -> bool -> bool" -> true
+  | _ -> false
+
+let%test "fun1" =
+  match
+    Parsing.Parse.parse "fun x -> fun y -> fun k -> k (k x y) (k y x)"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst |> string_of_typ
+  with
+  | "'a -> 'a -> ('a -> 'a -> 'a) -> 'a" -> true
+  | _ -> false
+
+let%test "fun2" =
+  match
+    Parsing.Parse.parse "fun x -> fun y -> let x = x y in fun x -> y x"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst |> string_of_typ
+  with
+  | "(('a -> 'b) -> 'c) -> ('a -> 'b) -> 'a -> 'b" -> true
+  | _ -> false
+
+let%test "fun2" =
+  match
+    Parsing.Parse.parse "fun x -> let y = let z = x (fun x -> x) in z in y"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+    |> fst |> string_of_typ
+  with
+  | "(('a -> 'a) -> 'b) -> 'b" -> true
+  | _ -> false
+
 let%test "wrong_application" =
   match
     Parsing.Parse.parse "let _ = 1 2"
