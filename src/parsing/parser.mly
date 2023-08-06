@@ -9,6 +9,7 @@
 
 %token <int> INT
 %token <string> IDENT
+%token SEMICOLON
 %token PLUS
 %token MULT
 %token TRUE
@@ -53,11 +54,11 @@ expr:
   (* | e1 = expr; PLUS; e2 = expr { Bop (Add, e1, e2) } *)
   (* | e1 = expr; MULT; e2 = expr { Bop (Mult, e1, e2) } *)
   (* | e1 = expr; EQ; e2 = expr { Bop (Eq, e1, e2) } *)
-  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; { Fun { name; vars; binding; in_body = None } }
-  | LET; name = IDENT; EQUALS; binding = expr; { Let { name; binding; in_body = None } }
-  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; IN; body = expr { Fun { name; vars; binding; in_body = Some body } }
-  | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr { Let { name; binding; in_body = Some body } }
-  | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr { If (b, e1, e2) }
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; SEMICOLON? { Fun { name; vars; binding; in_body = None } }
+  | LET; name = IDENT; EQUALS; binding = expr; SEMICOLON? { Let { name; binding; in_body = None } }
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; IN; body = expr; SEMICOLON? { Fun { name; vars; binding; in_body = Some body } }
+  | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr; SEMICOLON? { Let { name; binding; in_body = Some body } }
+  | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr; SEMICOLON? { If (b, e1, e2) }
   | e = simple_expr; es = simple_expr+ { make_apply e es }
   | FUN; vars = list(IDENT); ARROW; body = expr; { Lambda { vars; body } }
   ;

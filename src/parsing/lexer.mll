@@ -11,6 +11,7 @@ let ident = letter+
 rule read =
   parse
   | white { read lexbuf }
+  | ";" { SEMICOLON }
   | "+" { PLUS }
   | "*" { MULT }
   | "(" { LPAREN }

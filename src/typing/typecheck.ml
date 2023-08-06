@@ -8,6 +8,19 @@ open Ast.Typed
 let lookup ctx x =
   try (Ctx.find x ctx |> inst, ctx) with Not_found -> unbound_variable x
 
+(* Delayed occurs check to prevent cyclic types. Runs at the end of the typecheck *)
+let rec cycle_free = function
+  | TInt | TUnit | TBool | TVar { contents = Unbound _ } -> ()
+  | TVar { contents = Link ty } -> cycle_free ty
+  | TArrow (_, _, ls) when ls.new_level = marked_level ->
+      occur_error "Variable occurs inside its definition"
+  | TArrow (t1, t2, ls) ->
+      let level = ls.new_level in
+      ls.new_level <- marked_level;
+      cycle_free t1;
+      cycle_free t2;
+      ls.new_level <- level
+
 let rec typeof ctx = function
   | Unit -> (TUnit, ctx)
   | Int _ -> (TInt, ctx)
@@ -24,6 +37,7 @@ let rec typeof ctx = function
       enter_level ();
       let t_e, _ = typeof ctx binding in
       leave_level ();
+      cycle_free t_e;
       gen t_e;
       let ctx' = Ctx.add name t_e ctx in
       match in_body with
@@ -48,7 +62,9 @@ let rec typeof ctx = function
   | App (e1, e2) -> (
       let t_fun, _ = typeof ctx e1 in
       match t_fun with
-      | TArrow _ ->
+      | TArrow _
+      | TVar { contents = Unbound _ }
+      | TVar { contents = Link (TArrow _) } ->
           let t_arg, _ = typeof ctx e2 in
           let t_res = newvar () in
           new_arrow t_arg t_res |> unify t_fun;
@@ -67,19 +83,6 @@ and if_branch ctx e2 e3 =
       (* (t, ctx) *)
   | t1, t2 when t1 = t2 -> (t1, ctx)
   | t1, t2 -> type_error t1 t2
-
-(* Delayed occurs check to prevent cyclic types. Runs at the end of the typecheck *)
-let rec cycle_free = function
-  | TInt | TUnit | TBool | TVar { contents = Unbound _ } -> ()
-  | TVar { contents = Link ty } -> cycle_free ty
-  | TArrow (_, _, ls) when ls.new_level = marked_level ->
-      occur_error "Variable occurs inside its definition"
-  | TArrow (t1, t2, ls) ->
-      let level = ls.new_level in
-      ls.new_level <- marked_level;
-      cycle_free t1;
-      cycle_free t2;
-      ls.new_level <- level
 
 let type_check ctx exp =
   reset_type_variables ();

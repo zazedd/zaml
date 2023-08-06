@@ -1,5 +1,6 @@
 open Ast.Typed
 open Typing.Env
+open Typing.Errors
 
 let run () = ()
 
@@ -107,3 +108,38 @@ let%test "apply" =
   with
   | TVar { contents = Link TBool } -> true
   | _ -> false
+
+let%test "wrong_application" =
+  match
+    Parsing.Parse.parse "let _ = 1 2"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+  with
+  | exception TypeError _ -> true
+  | (exception _) | _ -> false
+
+let%test "wrong_application2" =
+  match
+    List.nth (Parsing.Parse.parse "let f a = a; let _ = 1 f") 1
+    |> Typing.Typecheck.type_check Ctx.empty
+  with
+  | exception TypeError _ -> true
+  | (exception _) | _ -> false
+
+let%test "occur_error1" =
+  match
+    Parsing.Parse.parse "let _ = fun y -> y (fun z -> y z)"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+  with
+  | exception OccurCheck _ -> true
+  | (exception _) | _ -> false
+
+let%test "occur_error2" =
+  match
+    Parsing.Parse.parse "let f y = y (fun z -> y z)"
+    |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+  with
+  | exception OccurCheck _ -> true
+  | (exception _) | _ -> false

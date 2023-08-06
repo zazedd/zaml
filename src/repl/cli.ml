@@ -1,4 +1,5 @@
 open Ast.Typed
+open Typing.Env
 open Typing.Errors
 open Typing.Typecheck
 open Parsing.Parse
@@ -18,8 +19,14 @@ let rec run ctx =
     | str when str = "#quit" || str = "#exit" ->
         exit_repl "See you later cowboy..."
     | str ->
-        let t, t_ctx = str |> parse |> List.hd |> type_check ctx in
-        t |> string_of_typ |> print_endline;
+        let ast = str |> parse in
+        let t_ctx =
+          (List.fold_left (fun acc a ->
+               let t', t_ctx' = a |> type_check acc in
+               "- : " ^ (t' |> string_of_typ) |> print_endline;
+               Ctx.merge (fun _ _ x -> x) acc t_ctx'))
+            ctx ast
+        in
         run t_ctx
   with
   | End_of_file -> exit_repl "\nSee you later cowboy..."

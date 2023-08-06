@@ -17,11 +17,19 @@ type typ =
 and tvar = Unbound of variable * level | Link of typ
 and levels = { mutable new_level : level; mutable old_level : level }
 
+let rec is_paren = function
+  | TVar { contents = Link t } -> is_paren t
+  | TArrow (_, _, _) -> true
+  | _ -> false
+
 let rec string_of_typ = function
   | TUnit -> "unit"
   | TBool -> "bool"
   | TInt -> "int"
-  | TArrow (t1, t2, _) ->
-      Format.sprintf "%s -> %s" (string_of_typ t1) (string_of_typ t2)
   | TVar { contents = Link t; _ } -> string_of_typ t
   | TVar { contents = Unbound (name, _); _ } -> name
+  | TArrow (a, b, _) ->
+      let a_str = string_of_typ a in
+      let b_str = string_of_typ b in
+      if is_paren a then "(" ^ a_str ^ ") -> " ^ b_str
+      else a_str ^ " -> " ^ b_str
