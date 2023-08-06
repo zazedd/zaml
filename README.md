@@ -32,14 +32,16 @@ dune runtest
 
 - [x] Typechecking (Generalized Hindley-Milner (inspired by Didier Remy))
 - [ ] Evaluation
+- [ ] Better Syntax Errors
+  - [ ] Positions
 - [ ] Language features
   - [x] Let variable expressions
-  - [ ] Let function expressions
+  - [x] Let function expressions
     - [x] Implemented
-    - [ ] Multiple argumrnts
-  - [ ] Lambda expressions
+    - [x] Multiple argumrnts
+  - [x] Lambda expressions
     - [x] Implemented
-    - [ ] Multiple arguments
+    - [x] Multiple arguments
   - [x] If expressions
   - [ ] Match expressions
   - [ ] Algebraic effects
@@ -49,15 +51,15 @@ dune runtest
     - [ ] Figure out what else to include
   - [ ] Binary operators
     - [ ] Int ops
-      - [ ] +
       - [ ] -
-      - [ ] *
+      - [ ] -
+      - [ ] -
       - [ ] /
       - [ ] %
       - [ ] ==
       - [ ] !=
-      - [ ] >, =>
-      - [ ] <  =<
+      - [ ] > , =>
+      - [ ] < =<
     - [ ] String op
       - [ ] ^ (string concat)
     - [ ] Bool ops
@@ -70,4 +72,3 @@ dune runtest
   - [x] TArrow (x -> y)
   - [ ] Strings
   - [ ] 'a list
-  

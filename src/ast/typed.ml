@@ -35,8 +35,8 @@ let string_of_typ t =
     | TUnit -> "unit"
     | TBool -> "bool"
     | TInt -> "int"
-    | TVar { contents = Link t; _ } -> go current tbl t
-    | TVar { contents = Unbound (n, _); _ } -> (
+    | TVar { contents = Link t } -> go current tbl t
+    | TVar { contents = Unbound (n, _) } -> (
         match Tbl.find_opt tbl n with
         | Some s -> s
         | None ->
@@ -44,10 +44,10 @@ let string_of_typ t =
             Tbl.add tbl n s;
             next_letter current;
             s)
-    | TArrow (a, b, _) ->
-        let a_str = go current tbl a in
-        let b_str = go current tbl b in
-        if is_paren a then "(" ^ a_str ^ ") -> " ^ b_str
-        else a_str ^ " -> " ^ b_str
+    | TArrow (t1, t2, _) ->
+        let t1_str = go current tbl t1 in
+        let t2_str = go current tbl t2 in
+        if is_paren t1 then "(" ^ t1_str ^ ") -> " ^ t2_str
+        else t1_str ^ " -> " ^ t2_str
   in
   go (Bytes.of_string "'a") (Tbl.create 1) t
