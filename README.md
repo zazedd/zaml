@@ -1,6 +1,6 @@
 # zaml
 
-OCaml inspired language
+A type inferred, statically-typed functional programming language inspired by OCaml
 
 ## Documentation
 
