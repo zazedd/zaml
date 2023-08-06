@@ -45,7 +45,8 @@ dune runtest
   - [ ] Algebraic effects
   - [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
   - [ ] Standard library
-    - [ ] Figure out what to include
+    - [ ] Universal `print` function
+    - [ ] Figure out what else to include
   - [ ] Binary operators
     - [ ] Int ops
       - [ ] +
