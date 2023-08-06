@@ -39,8 +39,8 @@ let%test "let lambda fun" =
     |> fst
   with
   | TArrow
-      ( TVar { contents = Unbound ("'a", 100000000) },
-        TVar { contents = Unbound ("'a", 100000000) },
+      ( TVar { contents = Unbound ("a", 100000000) },
+        TVar { contents = Unbound ("a", 100000000) },
         { new_level = 100000000; old_level = 100000000 } ) ->
       true
   | _ -> false
@@ -53,8 +53,8 @@ let%test "let fun" =
     |> fst
   with
   | TArrow
-      ( TVar { contents = Unbound ("'a", 1) },
-        TVar { contents = Unbound ("'a", 1) },
+      ( TVar { contents = Unbound ("a", 1) },
+        TVar { contents = Unbound ("a", 1) },
         { new_level = 1; old_level = 1 } ) ->
       true
   | _ -> false
