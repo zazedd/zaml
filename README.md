@@ -66,6 +66,7 @@ dune runtest
       - [ ] ^ (string concat)
     - [ ] Bool ops
       - [ ] !
+  - [ ] Garbage Collection
 - [ ] Types
   - [x] Unit
   - [x] Int
