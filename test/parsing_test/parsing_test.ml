@@ -3,66 +3,122 @@ open Ast.Parsed
 let run () = ()
 
 let%test "unit" =
-  match Parsing.Parse.parse "()" |> List.hd with Unit -> true | _ -> false
+  match
+    Parsing.Parse.from_string "()" |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Unit -> true
+  | _ -> false
 
 let%test "int" =
-  match Parsing.Parse.parse "10" |> List.hd with Int 10 -> true | _ -> false
+  match
+    Parsing.Parse.from_string "10" |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Int 10 -> true
+  | _ -> false
 
 let%test "bool" =
-  match Parsing.Parse.parse "true" |> List.hd with
+  match
+    Parsing.Parse.from_string "true"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
   | Bool true -> true
   | _ -> false
 
 let%test "let lambda fun" =
-  match Parsing.Parse.parse "let f = fun x -> x" |> List.hd with
+  match
+    Parsing.Parse.from_string "let f = fun x -> x"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
   | Let
       {
         name = "f";
-        binding = Lambda { vars = [ "x" ]; body = Var "x" };
+        binding =
+          { expr = Lambda { vars = [ "x" ]; body = { expr = Var "x"; _ } }; _ };
         in_body = None;
       } ->
       true
   | _ -> false
 
 let%test "let fun" =
-  match Parsing.Parse.parse "let f x = x" |> List.hd with
-  | Fun { name = "f"; vars = [ "x" ]; binding = Var "x"; in_body = None } ->
+  match
+    Parsing.Parse.from_string "let f x = x"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Fun
+      {
+        name = "f";
+        vars = [ "x" ];
+        binding = { expr = Var "x"; _ };
+        in_body = None;
+      } ->
       true
   | _ -> false
 
 let%test "int variable" =
-  match Parsing.Parse.parse "let a = 9" |> List.hd with
-  | Let { name = "a"; binding = Int 9; in_body = None } -> true
+  match
+    Parsing.Parse.from_string "let a = 9"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Let { name = "a"; binding = { expr = Int 9; _ }; in_body = None } -> true
   | _ -> false
 
 let%test "bool variable" =
-  match Parsing.Parse.parse "let a = false" |> List.hd with
-  | Let { name = "a"; binding = Bool false; in_body = None } -> true
+  match
+    Parsing.Parse.from_string "let a = false"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Let { name = "a"; binding = { expr = Bool false; _ }; in_body = None } ->
+      true
   | _ -> false
 
 let%test "unit variable" =
-  match Parsing.Parse.parse "let a = ()" |> List.hd with
-  | Let { name = "a"; binding = Unit; in_body = None } -> true
+  match
+    Parsing.Parse.from_string "let a = ()"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Let { name = "a"; binding = { expr = Unit; _ }; in_body = None } -> true
   | _ -> false
 
 let%test "let in" =
-  match Parsing.Parse.parse "let a = 420 in a" |> List.hd with
-  | Let { name = "a"; binding = Int 420; in_body = Some (Var "a") } -> true
+  match
+    Parsing.Parse.from_string "let a = 420 in a"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Let
+      {
+        name = "a";
+        binding = { expr = Int 420; _ };
+        in_body = Some { expr = Var "a"; _ };
+      } ->
+      true
   | _ -> false
 
 let%test "apply" =
-  match Parsing.Parse.parse "let a = let f b = b in f true" |> List.hd with
+  match
+    Parsing.Parse.from_string "let a = let f b = b in f true"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
   | Let
       {
         name = "a";
         binding =
-          Fun
-            {
-              name = "f";
-              vars = [ "b" ];
-              binding = Var "b";
-              in_body = Some (App (Var "f", Bool true));
-            };
+          {
+            expr =
+              Fun
+                {
+                  name = "f";
+                  vars = [ "b" ];
+                  binding = { expr = Var "b"; _ };
+                  in_body =
+                    Some
+                      {
+                        expr =
+                          App ({ expr = Var "f"; _ }, { expr = Bool true; _ });
+                        _;
+                      };
+                };
+            _;
+          };
         in_body = None;
       } ->
       true

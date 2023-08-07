@@ -35,7 +35,7 @@ let update_level l = function
   with the pending level update. That unification will do the level
   update along the way.
 *)
-let rec unify t1 t2 =
+let rec unify t1 t2 pos =
   if t1 == t2 then () (* t1 and t2 are physically the same *)
   else
     match (head t1, head t2) with
@@ -54,13 +54,13 @@ let rec unify t1 t2 =
         let min_level = min ll.new_level lr.new_level in
         ll.new_level <- marked_level;
         lr.new_level <- marked_level;
-        unify_lev min_level t11 t21;
-        unify_lev min_level t12 t22;
+        unify_lev min_level t11 t21 pos;
+        unify_lev min_level t12 t22 pos;
         ll.new_level <- min_level;
         lr.new_level <- min_level
-    | t1, t2 -> type_error t1 t2
+    | t1, t2 -> type_error t1 t2 pos
 
-and unify_lev l t1 t2 =
+and unify_lev l t1 t2 pos =
   let t1 = head t1 in
   update_level l t1;
-  unify t1 t2
+  unify t1 t2 pos

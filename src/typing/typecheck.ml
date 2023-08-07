@@ -5,8 +5,8 @@ open Errors
 open Ast.Parsed
 open Ast.Typed
 
-let lookup ctx x =
-  try (Ctx.find x ctx |> inst, ctx) with Not_found -> unbound_variable x
+let lookup ctx x pos =
+  try (Ctx.find x ctx |> inst, ctx) with Not_found -> unbound_variable x pos
 
 let add_vars_ctx ctx vars =
   List.fold_left
@@ -36,35 +36,36 @@ let rec cycle_free = function
       ls.new_level <- level
 
 let rec typeof ctx = function
-  | Unit -> (TUnit, ctx)
-  | Int _ -> (TInt, ctx)
-  | Bool _ -> (TBool, ctx)
-  | Var x -> lookup ctx x
-  | If (e1, e2, e3) -> typeof_if ctx e1 e2 e3
-  | Let { name; binding; in_body } -> typeof_let ctx name binding in_body
-  | Fun { name; vars; binding; in_body } ->
+  | { expr = Unit; _ } -> (TUnit, ctx)
+  | { expr = Int _; _ } -> (TInt, ctx)
+  | { expr = Bool _; _ } -> (TBool, ctx)
+  | { expr = Var x; pos } -> lookup ctx x pos
+  | { expr = If (e1, e2, e3); pos } -> typeof_if ctx e1 e2 e3 pos
+  | { expr = Let { name; binding; in_body }; _ } ->
+      typeof_let ctx name binding in_body
+  | { expr = Fun { name; vars; binding; in_body }; _ } ->
       typeof_fun ctx name vars binding in_body
-  | Lambda { vars; body } -> typeof_lambda ctx vars body
-  | App (e1, e2) -> typeof_app ctx e1 e2
+  | { expr = Lambda { vars; body }; _ } -> typeof_lambda ctx vars body
+  | { expr = App (e1, e2); pos } -> typeof_app ctx e1 e2 pos
 
-and typeof_if ctx e1 e2 e3 =
+and typeof_if ctx e1 e2 e3 pos =
   match typeof ctx e1 |> fst |> head with
-  | TBool -> if_branch ctx e2 e3
+  | TBool -> if_branch ctx e2 e3 pos
   | TVar _ as v ->
-      unify v TBool;
-      if_branch ctx e2 e3
+      unify v TBool pos;
+      if_branch ctx e2 e3 pos
   | _ -> TypeError "If guard must be boolean" |> raise
 
-and if_branch ctx e2 e3 =
+and if_branch ctx e2 e3 pos =
   match (typeof ctx e2 |> fst |> head, typeof ctx e3 |> fst |> head) with
   | (TVar _ as v), t ->
-      unify v t;
+      unify v t pos;
       (t, ctx)
   | t, (TVar _ as v) ->
-      unify v t;
+      unify v t pos;
       (t, ctx)
   | t1, t2 when t1 = t2 -> (t1, ctx)
-  | t1, t2 -> type_error t1 t2
+  | t1, t2 -> type_error t1 t2 pos
 
 and typeof_let ctx name binding in_body =
   enter_level ();
@@ -94,7 +95,7 @@ and typeof_lambda ctx vars body =
   let t = new_arrows ctx' vars t_e in
   (t, ctx)
 
-and typeof_app ctx e1 e2 =
+and typeof_app ctx e1 e2 pos =
   let t_fun, _ = typeof ctx e1 in
   match t_fun with
   | TArrow _
@@ -102,9 +103,9 @@ and typeof_app ctx e1 e2 =
   | TVar { contents = Link (TArrow _) } ->
       let t_arg, _ = typeof ctx e2 in
       let t_res = newvar () in
-      new_arrow t_arg t_res |> unify t_fun;
+      unify t_fun (new_arrow t_arg t_res) pos;
       (t_res, ctx)
-  | t -> unify_error t
+  | t -> unify_error t pos
 
 let type_check ctx exp =
   reset_type_variables ();

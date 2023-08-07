@@ -1,5 +1,6 @@
 {
   open Parser
+  open Errors
 }
 
 let white = [' ' '\t' '\n']+
@@ -38,4 +39,5 @@ rule read =
   | ident { IDENT ( Lexing.lexeme lexbuf ) }
   | int { INT ( Lexing.lexeme lexbuf |> int_of_string ) }
   | eof { EOF }
+  | _ as c { lexing_error lexbuf c }
 

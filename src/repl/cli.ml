@@ -3,6 +3,7 @@ open Typing.Env
 open Typing.Errors
 open Typing.Typecheck
 open Parsing.Parse
+open Parsing.Errors
 
 let bold_string str = Format.sprintf "\027[1m%s\027[0m" str
 let blue_string str = Format.sprintf "\027[34m%s\027[0m" str
@@ -19,7 +20,7 @@ let rec run ctx =
     | str when str = "#quit" || str = "#exit" ->
         exit_repl "See you later cowboy..."
     | str ->
-        let ast = str |> parse in
+        let ast = str |> from_string |> parse in
         let t_ctx =
           (List.fold_left (fun acc a ->
                let t', t_ctx' = a |> type_check acc in
@@ -32,4 +33,7 @@ let rec run ctx =
   | End_of_file -> exit_repl "\nSee you later cowboy..."
   | TypeError e | OccurCheck e ->
       print_endline ("Error: " ^ e);
+      run ctx
+  | ParsingError e | LexingError e ->
+      print_endline e;
       run ctx
