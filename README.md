@@ -37,29 +37,30 @@ dune runtest
 - [ ] Language features
   - [x] Let variable expressions
   - [x] Let function expressions
-    - [x] Implemented
-    - [x] Multiple argumrnts
+  - [ ] Let tuple with destructuring
   - [x] Lambda expressions
     - [x] Implemented
     - [x] Multiple arguments
   - [x] If expressions
   - [ ] Match expressions
   - [ ] Algebraic effects
+  - [ ] Refinement types
+  - [ ] Union types
   - [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
   - [ ] Standard library
     - [ ] Universal `print` function
     - [ ] Figure out what else to include
   - [ ] Binary operators
     - [ ] Int ops
+      - [ ] +
       - [ ] -
-      - [ ] -
-      - [ ] -
+      - [ ] *
       - [ ] /
       - [ ] %
       - [ ] ==
       - [ ] !=
       - [ ] > , =>
-      - [ ] < =<
+      - [ ] <, =<
     - [ ] String op
       - [ ] ^ (string concat)
     - [ ] Bool ops
@@ -68,7 +69,11 @@ dune runtest
   - [x] Unit
   - [x] Int
   - [x] Bool
-  - [x] TVar
-  - [x] TArrow (x -> y)
-  - [ ] Strings
+  - [ ] Char
+  - [ ] Float
+  - [ ] String
+  - [x] Var
+  - [x] Arrow (x -> y)
+  - [ ] Product (tuples)
   - [ ] 'a list
+  - [ ] 'a array
