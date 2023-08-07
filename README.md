@@ -46,6 +46,7 @@ dune runtest
   - [ ] Algebraic effects
   - [ ] Refinement types
   - [ ] Union types
+  - [ ] Algebraic data types
   - [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
   - [ ] Standard library
     - [ ] Universal `print` function
