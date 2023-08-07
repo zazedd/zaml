@@ -1,9 +1,14 @@
 {
   open Parser
   open Errors
+
+  let new_line (lexbuf : Lexing.lexbuf) =
+    let pos = lexbuf.lex_start_p in
+    Lexing.set_position lexbuf { pos with pos_cnum = 0; pos_bol = 0; pos_lnum = pos.pos_lnum + 1 }
 }
 
-let white = [' ' '\t' '\n']+
+let white = [' ' '\t']+
+let newl = '\n'
 let digit = ['0'-'9']
 let int = '-'? digit+
 let letter = ['_' 'a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '_' '0'-'9']*
@@ -12,6 +17,7 @@ let ident = letter+
 rule read =
   parse
   | white { read lexbuf }
+  | newl { new_line lexbuf; read lexbuf }
   | ";" { SEMICOLON }
   | "+" { PLUS }
   | "*" { MULT }

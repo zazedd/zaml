@@ -4,12 +4,16 @@ open Ast.Parsed
 exception LexingError of string
 exception ParsingError of string
 
+let which_chars start ending =
+  if start = ending then Format.sprintf "Character %d" start
+  else Format.sprintf "Characters %d-%d" start ending
+
 let error_pos pos =
   match pos.fname with
-  | "" -> Format.sprintf "Syntax Error: Characters %d-%d" pos.start pos.ending
+  | "" -> "Syntax Error: " ^ which_chars pos.start pos.ending
   | fname ->
-      Format.sprintf "Syntax Error: File %s on Line %d ->\n\tCharacter %d-%d"
-        fname pos.lnum pos.start pos.ending
+      Format.sprintf "Syntax Error: File %s on Line %d ->\n\t%s" fname pos.lnum
+        (which_chars pos.start pos.ending)
 
 let lexing_error (lexbuf : Lexing.lexbuf) c =
   let pos =

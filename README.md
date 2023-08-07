@@ -34,7 +34,10 @@ dune runtest
 
 - [ ] Evaluation
 - [ ] Better Syntax Errors
-  - [ ] Positions
+  - [x] Line Positions
+  - [ ] Character Positions
+    - [x] REPL
+    - [ ] Intepreter (they don't reset for some reason)
 
 -> Core Language
 
