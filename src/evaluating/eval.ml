@@ -51,6 +51,8 @@ and eval_app ctx e1 e2 =
   let e, ctx' = value_of ctx e1 in
   match e with
   | Closure { vars; body; context } ->
+      if List.length vars <> List.length e2 then
+        RuntimeError "Partial application not allowed yet" |> raise;
       let body_env =
         List.fold_left2
           (fun acc var exp ->

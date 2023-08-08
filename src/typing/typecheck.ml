@@ -26,8 +26,7 @@ let new_arrows ctx' vars t_e =
 let rec cycle_free = function
   | TInt | TUnit | TBool | TVar { contents = Unbound _ } -> ()
   | TVar { contents = Link ty } -> cycle_free ty
-  | TArrow (_, _, ls) as e when ls.new_level = marked_level ->
-      string_of_typ e |> print_endline;
+  | TArrow (_, _, ls) when ls.new_level = marked_level ->
       occur_error "cycle_free: Variable occurs inside its definition"
   | TArrow (t1, t2, ls) ->
       let level = ls.new_level in
@@ -51,17 +50,17 @@ and typeof_if ctx e1 e2 e3 pos =
   match typeof ctx e1 |> fst |> head with
   | TBool -> if_branch ctx e2 e3 pos
   | TVar _ as v ->
-      unify v TBool pos;
+      unify v v TBool pos;
       if_branch ctx e2 e3 pos
   | _ -> TypeError "If guard must be boolean" |> raise
 
 and if_branch ctx e2 e3 pos =
   match (typeof ctx e2 |> fst |> head, typeof ctx e3 |> fst |> head) with
   | (TVar _ as v), t ->
-      unify v t pos;
+      unify v v t pos;
       (t, ctx)
   | t, (TVar _ as v) ->
-      unify v t pos;
+      unify v v t pos;
       (t, ctx)
   | t1, t2 when t1 = t2 -> (t1, ctx)
   | t1, t2 -> type_error t1 t2 pos
@@ -85,8 +84,8 @@ and typeof_lambda ctx vars body =
   (t, ctx)
 
 and typeof_app ctx e1 e2 pos =
-  let t_fun = typeof ctx e1 |> fst |> head in
-  match t_fun with
+  let t_fun = typeof ctx e1 |> fst in
+  match t_fun |> head with
   | TArrow _ | TVar { contents = Unbound _ } ->
       let t_res = newvar () in
       let arrow_args =
@@ -96,7 +95,7 @@ and typeof_app ctx e1 e2 pos =
             new_arrow t_arg acc)
           e2 t_res
       in
-      unify t_fun arrow_args pos;
+      unify t_fun t_fun arrow_args pos;
       (t_res, ctx)
   | t -> unify_error t pos
 
