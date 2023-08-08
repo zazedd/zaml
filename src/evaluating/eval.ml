@@ -51,8 +51,13 @@ and eval_app ctx e1 e2 =
   let e, ctx' = value_of ctx e1 in
   match e with
   | Closure { vars; body; context } ->
-      let v2 = value_of ctx' e2 |> fst in
-      let body_env = ECtx.add (vars |> List.hd) v2 context in
+      let body_env =
+        List.fold_left2
+          (fun acc var exp ->
+            let v, _ = value_of ctx' exp in
+            ECtx.add var v acc)
+          context vars e2
+      in
       (value_of body_env body |> fst, ctx)
   | _ ->
       RuntimeError "First parameter of application is not a function" |> raise

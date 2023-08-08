@@ -1,10 +1,10 @@
 %{
   open Ast.Parsed
 
-  let rec make_apply pos e = function
+  let rec make_apply acc pos e = function
     | [] -> failwith "precondition violated"
-    | [e'] -> { expr = App (e, e'); pos }
-	  | h :: ((_ :: _) as t) -> make_apply pos ({ expr = App (e, h); pos = pos }) t
+    | [e'] -> { expr = App (e, (e' :: acc) |> List.rev); pos }
+	  | h :: ((_ :: _) as t) -> make_apply (h :: acc) pos e t
 %}
 
 %token <int> INT
@@ -79,7 +79,7 @@ expr:
       expr = If (b, e1, e2); pos = position ($loc, $loc($7))
     }
   }
-  | e = simple_expr; es = simple_expr+ { make_apply (position ($loc, $loc(es))) e es }
+  | e = simple_expr; es = simple_expr+ { make_apply [] (position ($loc, $loc(es))) e es }
   | FUN; vars = list(IDENT); ARROW; body = expr; {
     {
       expr = Lambda { vars; body }; pos = position ($loc, $loc(body))

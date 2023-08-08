@@ -19,7 +19,7 @@ let lazy_adjust () =
         var := Unbound (name, level);
         acc
     | TArrow (_, _, ls) when ls.new_level = marked_level ->
-        occur_error "Variable occurs inside its definition"
+        occur_error "lazy_adjust: Variable occurs inside its definition"
     | TArrow (_, _, ls) as t ->
         if ls.new_level > level then ls.new_level <- level;
         adjust_one acc t

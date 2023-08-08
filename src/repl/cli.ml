@@ -41,7 +41,7 @@ let rec run t_ctx e_ctx =
         run t_ctx e_ctx
   with
   | End_of_file -> exit_repl "\nSee you later cowboy..."
-  | TypeError e | OccurCheck e ->
+  | TypeError e | OccurCheck e | RuntimeError e ->
       print_endline ("Error: " ^ e);
       run t_ctx e_ctx
   | ParsingError e | LexingError e ->

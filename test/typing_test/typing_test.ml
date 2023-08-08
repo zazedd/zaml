@@ -206,3 +206,12 @@ let%test "occur_error2" =
   with
   | exception OccurCheck _ -> true
   | (exception _) | _ -> false
+
+let%test "cycle_free bug" =
+  match
+    Parsing.Parse.from_string "let f a b = if a then b else 1; f true true; f"
+    |> Parsing.Parse.parse |> List.hd
+    |> Typing.Typecheck.type_check Ctx.empty
+  with
+  | exception _ -> false
+  | _ -> true

@@ -8,7 +8,7 @@ type t =
   | If of expr * expr * expr
   | Let of { name : variable; binding : expr; in_body : expr option }
   | Lambda of { vars : variable list; body : expr }
-  | App of expr * expr
+  | App of expr * expr list
 
 and expr = { expr : t; pos : pos }
 
@@ -39,5 +39,6 @@ let rec string_of_ast = function
       List.fold_left (fun acc a -> acc ^ " " ^ a) "Lambda :\nvars : \n" vars
       ^ "\nbody : " ^ string_of_ast body
   | { expr = App (e1, e2); _ } ->
-      "App : " ^ string_of_ast e1 ^ " and " ^ string_of_ast e2
+      "App : " ^ string_of_ast e1 ^ " and "
+      ^ List.fold_left (fun acc a -> acc ^ string_of_ast a) "" e2
   | _ -> assert false
