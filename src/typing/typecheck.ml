@@ -68,30 +68,14 @@ and if_branch ctx e2 e3 pos =
 
 and typeof_bop ctx op e1 e2 pos =
   match (op, typeof ctx e1 |> fst |> head, typeof ctx e2 |> fst |> head) with
-  | Add, TInt, TInt | Mult, TInt, TInt -> (TInt, ctx)
-  | Eq, TInt, TInt -> (TBool, ctx)
-  | Eq, (TVar _ as v), TInt ->
-      unify v v TInt pos;
-      (TBool, ctx)
-  | Eq, TInt, (TVar _ as v) ->
-      unify v v TInt pos;
-      (TBool, ctx)
-  | Eq, (TVar _ as v1), (TVar _ as v2) ->
-      (* TODO currently only Ints, add more types *)
-      unify v1 v1 TInt pos;
-      unify v2 v2 TInt pos;
-      (TBool, ctx)
-  | _, (TVar _ as v), TInt ->
-      unify v v TInt pos;
-      (TInt, ctx)
-  | _, TInt, (TVar _ as v) ->
-      unify v v TInt pos;
-      (TInt, ctx)
-  | _, (TVar _ as v1), (TVar _ as v2) ->
-      unify v1 v1 TInt pos;
-      unify v2 v2 TInt pos;
-      (TInt, ctx)
-  | _, t1, t2 -> op_error t1 t2 pos
+  | (Add as op), t1, t2 | (Mult as op), t1, t2 ->
+      typeof_bop_int ctx op t1 t2 pos
+  | Eq, t1, t2 -> unify_bop ctx t1 t2 TInt TBool pos
+
+and typeof_bop_int ctx op t1 t2 pos =
+  match op with
+  | Add | Mult -> unify_bop ctx t1 t2 TInt TInt pos
+  | Eq -> assert false
 
 and typeof_let ctx name binding in_body =
   enter_level ();

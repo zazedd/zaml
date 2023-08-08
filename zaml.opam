@@ -19,6 +19,9 @@ bug-reports: "https://github.com/zazed/zaml/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.7"}
+  "menhir"
+  "ppx_expect"
+  "ppx_inline_test"
   "odoc" {with-doc}
 ]
 build: [
