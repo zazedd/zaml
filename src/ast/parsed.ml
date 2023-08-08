@@ -1,11 +1,14 @@
 open Common
 
+type op = Add | Mult | Eq
+
 type t =
   | Unit
   | Int of int
   | Bool of bool
   | Var of variable
   | If of expr * expr * expr
+  | Bop of op * expr * expr
   | Let of { name : variable; binding : expr; in_body : expr option }
   | Lambda of { vars : variable list; body : expr }
   | App of expr * expr list

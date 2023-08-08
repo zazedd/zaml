@@ -1,7 +1,6 @@
 open Ast.Parsed
 open Env
-
-exception RuntimeError of string
+open Errors
 
 let is_value = function VUnit | VInt _ | VBool _ -> true | _ -> false
 
@@ -11,16 +10,18 @@ let string_of_val = function
   | VBool b -> string_of_bool b
   | Closure _ -> failwith "Not a value"
 
+let lookup ctx v =
+  try (ECtx.find v ctx, ctx) with Not_found -> unbound_variable v
+
 let rec value_of ctx e =
   match get_expr e with
   | Unit -> (VUnit, ctx)
   | Int v -> (VInt v, ctx)
   | Bool v -> (VBool v, ctx)
-  | Var v -> (
-      try (ECtx.find v ctx, ctx)
-      with Not_found -> RuntimeError "Unbound variable" |> raise)
-  | Let { name; binding; in_body } -> eval_let ctx name binding in_body
+  | Var v -> lookup ctx v
   | If (e1, e2, e3) -> eval_if ctx e1 e2 e3
+  | Bop (op, e1, e2) -> eval_bop ctx op e1 e2
+  | Let { name; binding; in_body } -> eval_let ctx name binding in_body
   | Lambda { vars; body } -> (Closure { vars; body; context = ctx }, ctx)
   | App (e1, e2) -> eval_app ctx e1 e2
 
@@ -45,14 +46,20 @@ and eval_if ctx e1 e2 e3 =
   match e with
   | VBool true -> value_of ctx' e2
   | VBool false -> value_of ctx' e3
-  | _ -> RuntimeError "If guard must be a boolean" |> raise
+  | _ -> if_guard_error ()
+
+and eval_bop ctx op e1 e2 =
+  match (op, value_of ctx e1 |> fst, value_of ctx e2 |> fst) with
+  | Add, VInt a, VInt b -> (VInt (a + b), ctx)
+  | Mult, VInt a, VInt b -> (VInt (a * b), ctx)
+  | Eq, VInt a, VInt b -> (VBool (a = b), ctx)
+  | _ -> op_error ()
 
 and eval_app ctx e1 e2 =
   let e, ctx' = value_of ctx e1 in
   match e with
   | Closure { vars; body; context } ->
-      if List.length vars <> List.length e2 then
-        RuntimeError "Partial application not allowed yet" |> raise;
+      if List.length vars <> List.length e2 then partial_app_error ();
       let body_env =
         List.fold_left2
           (fun acc var exp ->
@@ -61,5 +68,4 @@ and eval_app ctx e1 e2 =
           context vars e2
       in
       (value_of body_env body |> fst, ctx)
-  | _ ->
-      RuntimeError "First parameter of application is not a function" |> raise
+  | _ -> app_error ()

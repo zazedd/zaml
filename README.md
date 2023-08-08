@@ -55,12 +55,12 @@ dune runtest
   - [ ] Figure out what else to include
 - [ ] Binary operators
   - [ ] Int ops
+    - [x] +
     - [ ] -
-    - [ ] -
-    - [ ] -
+    - [x] *
     - [ ] /
     - [ ] %
-    - [ ] ==
+    - [x] ==
     - [ ] !=
     - [ ] > , =>
     - [ ] <, =<

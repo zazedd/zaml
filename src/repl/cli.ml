@@ -4,6 +4,7 @@ open Typing.Errors
 open Typing.Typecheck
 open Evaluating.Env
 open Evaluating.Eval
+open Evaluating.Errors
 open Parsing.Parse
 open Parsing.Errors
 

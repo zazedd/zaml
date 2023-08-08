@@ -1,5 +1,6 @@
 open Ast.Parsed
 
+let start_time = Sys.time ()
 let run () = ()
 
 let%test "unit" =
@@ -22,6 +23,30 @@ let%test "bool" =
     |> Parsing.Parse.parse |> List.hd |> get_expr
   with
   | Bool true -> true
+  | _ -> false
+
+let%test "bop+" =
+  match
+    Parsing.Parse.from_string "1 + 2"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Bop (Add, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
+  | _ -> false
+
+let%test "bop*" =
+  match
+    Parsing.Parse.from_string "1 * 2"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Bop (Mult, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
+  | _ -> false
+
+let%test "bop==" =
+  match
+    Parsing.Parse.from_string "1 == 2"
+    |> Parsing.Parse.parse |> List.hd |> get_expr
+  with
+  | Bop (Eq, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
   | _ -> false
 
 let%test "let lambda fun" =
@@ -95,3 +120,9 @@ let%test "let in" =
       } ->
       true
   | _ -> false
+
+let () =
+  "Parsing tests completed sucessfuly. Time elapsed: "
+  ^ string_of_float ((Sys.time () -. start_time) *. 1000.)
+  ^ "ms"
+  |> print_endline

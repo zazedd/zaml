@@ -37,31 +37,30 @@ let update_level l = function
 *)
 
 let rec unify init t1 t2 pos =
-  if t1 == t2 then () (* t1 and t2 are physically the same *)
-  else
-    match (head t1, head t2) with
-    | ( (TVar ({ contents = Unbound (_, l1) } as var1) as t1),
-        (TVar ({ contents = Unbound (_, l2) } as var2) as t2) ) ->
-        if var1 == var2 then ()
-        else if l1 > l2 then var1 := Link t2
-        else var2 := Link t1
-    | TVar ({ contents = Unbound (_, l) } as var), t'
-    | t', TVar ({ contents = Unbound (_, l) } as var) ->
-        update_level l t';
-        var := Link t'
-    | TArrow (t11, t12, ll), TArrow (t21, t22, lr) ->
-        if ll.new_level = marked_level || lr.new_level = marked_level then
-          occur_error "Loop encountered";
-        let min_level = min ll.new_level lr.new_level in
-        ll.new_level <- marked_level;
-        lr.new_level <- marked_level;
-        unify_lev min_level init t11 t21 pos;
-        unify_lev min_level init t12 t22 pos;
-        ll.new_level <- min_level;
-        lr.new_level <- min_level
-    | t1, t2 ->
-        reset_level init;
-        type_error t1 t2 pos
+  match (head t1, head t2) with
+  | t1, t2 when t1 = t2 -> ()
+  | ( (TVar ({ contents = Unbound (_, l1) } as var1) as t1),
+      (TVar ({ contents = Unbound (_, l2) } as var2) as t2) ) ->
+      if var1 == var2 then ()
+      else if l1 > l2 then var1 := Link t2
+      else var2 := Link t1
+  | TVar ({ contents = Unbound (_, l) } as var), t'
+  | t', TVar ({ contents = Unbound (_, l) } as var) ->
+      update_level l t';
+      var := Link t'
+  | TArrow (t11, t12, ll), TArrow (t21, t22, lr) ->
+      if ll.new_level = marked_level || lr.new_level = marked_level then
+        occur_error "Loop encountered";
+      let min_level = min ll.new_level lr.new_level in
+      ll.new_level <- marked_level;
+      lr.new_level <- marked_level;
+      unify_lev min_level init t11 t21 pos;
+      unify_lev min_level init t12 t22 pos;
+      ll.new_level <- min_level;
+      lr.new_level <- min_level
+  | t1, t2 ->
+      reset_level init;
+      type_error t1 t2 pos
 
 and unify_lev l init t1 t2 pos =
   let t1 = head t1 in

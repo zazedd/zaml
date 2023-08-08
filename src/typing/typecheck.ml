@@ -41,6 +41,7 @@ let rec typeof ctx = function
   | { expr = Bool _; _ } -> (TBool, ctx)
   | { expr = Var x; pos } -> lookup ctx x pos
   | { expr = If (e1, e2, e3); pos } -> typeof_if ctx e1 e2 e3 pos
+  | { expr = Bop (op, e1, e2); pos } -> typeof_bop ctx op e1 e2 pos
   | { expr = Let { name; binding; in_body }; _ } ->
       typeof_let ctx name binding in_body
   | { expr = Lambda { vars; body }; _ } -> typeof_lambda ctx vars body
@@ -64,6 +65,33 @@ and if_branch ctx e2 e3 pos =
       (t, ctx)
   | t1, t2 when t1 = t2 -> (t1, ctx)
   | t1, t2 -> type_error t1 t2 pos
+
+and typeof_bop ctx op e1 e2 pos =
+  match (op, typeof ctx e1 |> fst |> head, typeof ctx e2 |> fst |> head) with
+  | Add, TInt, TInt | Mult, TInt, TInt -> (TInt, ctx)
+  | Eq, TInt, TInt -> (TBool, ctx)
+  | Eq, (TVar _ as v), TInt ->
+      unify v v TInt pos;
+      (TBool, ctx)
+  | Eq, TInt, (TVar _ as v) ->
+      unify v v TInt pos;
+      (TBool, ctx)
+  | Eq, (TVar _ as v1), (TVar _ as v2) ->
+      (* TODO currently only Ints, add more types *)
+      unify v1 v1 TInt pos;
+      unify v2 v2 TInt pos;
+      (TBool, ctx)
+  | _, (TVar _ as v), TInt ->
+      unify v v TInt pos;
+      (TInt, ctx)
+  | _, TInt, (TVar _ as v) ->
+      unify v v TInt pos;
+      (TInt, ctx)
+  | _, (TVar _ as v1), (TVar _ as v2) ->
+      unify v1 v1 TInt pos;
+      unify v2 v2 TInt pos;
+      (TInt, ctx)
+  | _, t1, t2 -> op_error t1 t2 pos
 
 and typeof_let ctx name binding in_body =
   enter_level ();

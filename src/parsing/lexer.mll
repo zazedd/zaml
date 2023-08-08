@@ -2,9 +2,9 @@
   open Parser
   open Errors
 
-  let new_line (lexbuf : Lexing.lexbuf) =
-    let pos = lexbuf.lex_start_p in
-    Lexing.set_position lexbuf { pos with pos_cnum = 0; pos_bol = 0; pos_lnum = pos.pos_lnum + 1 }
+  let new_line f (lexbuf : Lexing.lexbuf) =
+    Lexing.new_line lexbuf;
+    f lexbuf
 }
 
 let white = [' ' '\t']+
@@ -17,7 +17,7 @@ let ident = letter+
 rule read =
   parse
   | white { read lexbuf }
-  | newl { new_line lexbuf; read lexbuf }
+  | newl { new_line read lexbuf }
   | ";" { SEMICOLON }
   | "+" { PLUS }
   | "*" { MULT }
