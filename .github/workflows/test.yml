@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
   workflow_dispatch:
 
@@ -19,16 +19,18 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: 5.0.0
-          
+
       - name: Menhir setup
         run: |
           opam install conf-python-3.1.0.0 menhir
           eval $(opam env)
 
       - name: Installing deps
-        run: opam install . --deps-only --with-doc
+        run: |
+          opam install . --deps-only --with-doc
+          opam install ocamllex ppx_expect ppx_inline_test
         shell: bash
-      
+
       - name: Testing
         run: |
           opam exec -- dune build
