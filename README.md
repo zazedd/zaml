@@ -32,7 +32,7 @@ dune runtest
 
 -> Next-up
 
-- [ ] Evaluation
+- [ ] Partial Applications
 - [ ] Better Syntax Errors
   - [x] Line Positions
   - [ ] Character Positions
@@ -41,6 +41,7 @@ dune runtest
 
 -> Core Language
 
+- [x] Evaluation
 - [x] Let variable expressions
 - [x] Let function expressions
 - [ ] Let tuple with destructuring
