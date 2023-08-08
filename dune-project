@@ -21,6 +21,6 @@
  (name zaml)
  (synopsis "Small OCaml inspired language")
  (description "Small OCaml inspired language")
- (depends ocaml dune menhir ocamllex ppx_expect ppx_inline_test)
+ (depends ocaml dune menhir ppx_expect ppx_inline_test)
  (tags
   (OCaml "functional programming" language types "hindley-milner" "generalized hindley-milner")))

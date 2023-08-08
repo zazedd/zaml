@@ -28,7 +28,7 @@ jobs:
       - name: Installing deps
         run: |
           opam install . --deps-only --with-doc
-          opam install ocamllex ppx_expect ppx_inline_test
+          opam install ppx_expect ppx_inline_test
         shell: bash
 
       - name: Testing
