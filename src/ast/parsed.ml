@@ -8,12 +8,6 @@ type t =
   | If of expr * expr * expr
   | Let of { name : variable; binding : expr; in_body : expr option }
   | Lambda of { vars : variable list; body : expr }
-  | Fun of {
-      name : variable;
-      vars : variable list;
-      binding : expr;
-      in_body : expr option;
-    }
   | App of expr * expr
 
 and expr = { expr : t; pos : pos }
@@ -44,11 +38,6 @@ let rec string_of_ast = function
   | { expr = Lambda { vars; body }; _ } ->
       List.fold_left (fun acc a -> acc ^ " " ^ a) "Lambda :\nvars : \n" vars
       ^ "\nbody : " ^ string_of_ast body
-  | { expr = Fun { name; vars; binding; in_body }; _ } -> (
-      "Fun name : " ^ name
-      ^ List.fold_left (fun acc a -> acc ^ " " ^ a) "\nvars : \n" vars
-      ^ "\nbinding : " ^ string_of_ast binding ^ "\nbody : "
-      ^ match in_body with None -> "" | Some b -> string_of_ast b)
   | { expr = App (e1, e2); _ } ->
       "App : " ^ string_of_ast e1 ^ " and " ^ string_of_ast e2
   | _ -> assert false

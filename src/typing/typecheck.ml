@@ -43,8 +43,6 @@ let rec typeof ctx = function
   | { expr = If (e1, e2, e3); pos } -> typeof_if ctx e1 e2 e3 pos
   | { expr = Let { name; binding; in_body }; _ } ->
       typeof_let ctx name binding in_body
-  | { expr = Fun { name; vars; binding; in_body }; _ } ->
-      typeof_fun ctx name vars binding in_body
   | { expr = Lambda { vars; body }; _ } -> typeof_lambda ctx vars body
   | { expr = App (e1, e2); pos } -> typeof_app ctx e1 e2 pos
 
@@ -78,29 +76,18 @@ and typeof_let ctx name binding in_body =
   | None -> (t_e, ctx')
   | Some body -> (typeof ctx' body |> fst, ctx)
 
-and typeof_fun ctx name vars binding in_body =
-  let ctx' = add_vars_ctx ctx vars in
-  enter_level ();
-  let t_e, _ = typeof ctx' binding in
-  leave_level ();
-  let t = new_arrows ctx' vars t_e in
-  let ctx'' = Ctx.add name t ctx' in
-  match in_body with
-  | None -> (t, ctx'')
-  | Some body -> (typeof ctx'' body |> fst, ctx)
-
 and typeof_lambda ctx vars body =
   let ctx' = add_vars_ctx ctx vars in
+  enter_level ();
   let t_e, _ = typeof ctx' body in
+  leave_level ();
   let t = new_arrows ctx' vars t_e in
   (t, ctx)
 
 and typeof_app ctx e1 e2 pos =
-  let t_fun, _ = typeof ctx e1 in
+  let t_fun = typeof ctx e1 |> fst |> head in
   match t_fun with
-  | TArrow _
-  | TVar { contents = Unbound _ }
-  | TVar { contents = Link (TArrow _) } ->
+  | TArrow _ | TVar { contents = Unbound _ } ->
       let t_arg, _ = typeof ctx e2 in
       let t_res = newvar () in
       unify t_fun (new_arrow t_arg t_res) pos;

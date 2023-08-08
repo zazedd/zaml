@@ -15,7 +15,7 @@ let rec head = function
 let get_level = function
   | TVar { contents = Unbound (_, l) } -> l
   | TArrow (_, _, ls) -> ls.new_level
-  | _ -> assert false
+  | _ -> Int.min_int
 
 let genname_count = ref 0
 

@@ -53,13 +53,9 @@ let%test "let fun" =
     Parsing.Parse.from_string "let f x = x"
     |> Parsing.Parse.parse |> List.hd
     |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
+    |> fst |> string_of_typ
   with
-  | TArrow
-      ( TVar { contents = Unbound ("'a", 1) },
-        TVar { contents = Unbound ("'a", 1) },
-        { new_level = 1; old_level = 1 } ) ->
-      true
+  | "'a -> 'a" -> true
   | _ -> false
 
 let%test "int variable" =

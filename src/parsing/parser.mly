@@ -54,9 +54,9 @@ expr:
   (* | e1 = expr; PLUS; e2 = expr { Bop (Add, e1, e2) } *)
   (* | e1 = expr; MULT; e2 = expr { Bop (Mult, e1, e2) } *)
   (* | e1 = expr; EQ; e2 = expr { Bop (Eq, e1, e2) } *)
-  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; SEMICOLON? {
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; SEMICOLON? {
     {
-      expr = Fun { name; vars; binding; in_body = None }; pos = position ($loc, $loc(binding))
+      expr = Let { name; binding = { expr = Lambda { vars; body = b }; pos = position ($loc, $loc(b)) }; in_body = None }; pos = position ($loc, $loc(b))
     }
   }
   | LET; name = IDENT; EQUALS; binding = expr; SEMICOLON? {
@@ -64,9 +64,9 @@ expr:
       expr = Let { name; binding; in_body = None }; pos = position ($loc, $loc(binding))
     }
   }
-  | LET; name = IDENT; vars = list(IDENT); EQUALS; binding = expr; IN; body = expr; SEMICOLON? {
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; IN; body = expr; SEMICOLON? {
     {
-      expr = Fun { name; vars; binding; in_body = Some body }; pos = position ($loc, $loc($8))
+      expr = Let { name; binding = { expr = Lambda { vars; body = b }; pos = position ($loc, $loc(b)) }; in_body = Some body }; pos = position ($loc, $loc($8))
     }
   }
   | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr; SEMICOLON? {

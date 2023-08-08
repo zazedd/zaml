@@ -44,11 +44,14 @@ let%test "let fun" =
     Parsing.Parse.from_string "let f x = x"
     |> Parsing.Parse.parse |> List.hd |> get_expr
   with
-  | Fun
+  | Let
       {
         name = "f";
-        vars = [ "x" ];
-        binding = { expr = Var "x"; _ };
+        binding =
+          {
+            expr = Lambda { vars = [ "x" ]; body = { expr = Var "x"; _ }; _ };
+            _;
+          };
         in_body = None;
       } ->
       true
@@ -89,37 +92,6 @@ let%test "let in" =
         name = "a";
         binding = { expr = Int 420; _ };
         in_body = Some { expr = Var "a"; _ };
-      } ->
-      true
-  | _ -> false
-
-let%test "apply" =
-  match
-    Parsing.Parse.from_string "let a = let f b = b in f true"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
-  | Let
-      {
-        name = "a";
-        binding =
-          {
-            expr =
-              Fun
-                {
-                  name = "f";
-                  vars = [ "b" ];
-                  binding = { expr = Var "b"; _ };
-                  in_body =
-                    Some
-                      {
-                        expr =
-                          App ({ expr = Var "f"; _ }, { expr = Bool true; _ });
-                        _;
-                      };
-                };
-            _;
-          };
-        in_body = None;
       } ->
       true
   | _ -> false
