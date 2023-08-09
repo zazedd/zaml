@@ -1,0 +1,6 @@
+(library
+ (name eval_test)
+ (libraries parsing evaluating)
+ (inline_tests)
+ (preprocess
+  (pps ppx_expect ppx_inline_test)))

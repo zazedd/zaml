@@ -12,7 +12,7 @@ let string_of_val = function
   | VChar c -> "'" ^ String.make 1 c ^ "'"
   | VString s -> "\"" ^ s ^ "\""
   | VBool b -> string_of_bool b
-  | Closure _ -> failwith "Not a value"
+  | Closure _ -> not_a_value ()
 
 let lookup ctx v =
   try (ECtx.find v ctx, ctx) with Not_found -> unbound_variable v
@@ -24,7 +24,7 @@ let rec value_of ctx e =
   | If (e1, e2, e3) -> eval_if ctx e1 e2 e3
   | Bop (op, e1, e2) -> eval_bop ctx op e1 e2
   | Let { name; binding; in_body } -> eval_let ctx name binding in_body
-  | Lambda { vars; body } -> (Closure { vars; body; context = ctx }, ctx)
+  | Lambda { vars; body } -> (follow_lambda vars body ctx, ctx)
   | App (e1, e2) -> eval_app ctx e1 e2
 
 and eval_const ctx = function
@@ -59,6 +59,13 @@ and eval_bop ctx op e1 e2 =
   | Mod, VInt a, VInt b -> (VInt (a mod b), ctx)
   | Eq, VInt a, VInt b -> (VBool (a = b), ctx)
   | _ -> op_error ()
+
+and follow_lambda vars body ctx =
+  match get_expr body with
+  | Lambda { vars = vars_inside; body = body_inside } ->
+      let newvars = List.append vars vars_inside in
+      follow_lambda newvars body_inside ctx
+  | _ -> Closure { vars; body; context = ctx }
 
 and eval_app ctx e1 e2 =
   let e, ctx' = value_of ctx e1 in

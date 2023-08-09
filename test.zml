@@ -1,5 +1,14 @@
-let f1 = fun x -> fun y -> fun k -> k (k x y) (k y x)
 let f2 = fun x -> fun y -> let x = x y in fun x -> y x
-let f4 = fun x -> let y = let z = x (fun x -> x) in z in y
+let f2 = fun x -> let y = let z = x (fun x -> x) in z in y
+
+let g1 x y k = k (k x y) (k y x)
+
+let res_g1 = g1 5 10 (fun a b -> a + b)
+
+let h1 = fun x y k -> k (k x y) (k y x)
+
+let res_h1 = h1 5 10 (fun a b -> a + b)
+
+let f1 = fun x -> fun y -> fun k -> k (k x y) (k y x)
 
 let res_f1 = f1 5 10 (fun a b -> a + b)
