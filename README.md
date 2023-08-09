@@ -56,7 +56,7 @@ dune runtest
 - [ ] Binary operators
   - [ ] Universal ops
     - [x] ==
-    - [ ] !=
+    - [x] !=
   - [ ] Int ops
     - [x] +
     - [x] -

@@ -38,6 +38,7 @@
 %token DIV
 %token MODULUS
 %token EQ
+%token INEQ
 
 %token TRUE
 %token FALSE
@@ -103,6 +104,7 @@ bop:
   | DIV { Div }
   | MODULUS { Mod }
   | EQ { Eq }
+  | INEQ { Ineq }
   ;
 
 simple_expr:

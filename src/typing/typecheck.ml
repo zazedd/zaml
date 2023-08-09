@@ -80,14 +80,14 @@ and typeof_bop ctx op e1 e2 pos =
   | (Mod as op), t1, t2 ->
       typeof_bop_int ctx op t1 t2 pos
   | Concat, t1, t2 -> unify_bop ctx t1 t2 TString pos
-  | Eq, t1, t2 -> typeof_bop_eq ctx t1 t2 pos
+  | Eq, t1, t2 | Ineq, t1, t2 -> typeof_bop_equalities ctx t1 t2 pos
 
 and typeof_bop_int ctx op t1 t2 pos =
   match op with
   | Add | Subt | Mult | Div | Mod -> unify_bop ctx t1 t2 TInt pos
-  | Concat | Eq -> assert false
+  | Concat | Eq | Ineq -> assert false
 
-and typeof_bop_eq ctx t1 t2 pos =
+and typeof_bop_equalities ctx t1 t2 pos =
   match (t1 |> head, t2 |> head) with
   | t1, TInt | TInt, t1 -> unify_bop ctx t1 TInt TBool pos
   | t1, TChar | TChar, t1 -> unify_bop ctx t1 TChar TBool pos

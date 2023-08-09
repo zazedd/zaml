@@ -59,6 +59,7 @@ and eval_bop ctx op e1 e2 =
   | Mod, VInt a, VInt b -> (VInt (a mod b), ctx)
   | Concat, VString a, VString b -> (VString (a ^ b), ctx)
   | Eq, a, b -> (VBool (a = b), ctx)
+  | Ineq, a, b -> (VBool (a <> b), ctx)
   | _ -> op_error ()
 
 and follow_lambda vars body ctx =

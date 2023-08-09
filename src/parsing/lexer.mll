@@ -35,6 +35,7 @@ rule read =
   | "%" { MODULUS }
   | "=" { EQUALS }
   | "==" { EQ }
+  | "!=" { INEQ }
   | "(" { LPAREN }
   | ")" { RPAREN }
   | "true" { TRUE }
