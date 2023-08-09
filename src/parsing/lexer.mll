@@ -17,8 +17,9 @@ let newl = '\n'
 let digit = ['0'-'9']
 let int = '-'? digit+
 let letter = ['_' 'a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '_' '0'-'9']*
+let letter_space = ['_' 'a'-'z' ' ' 'A'-'Z'] ['a'-'z' 'A'-'Z' ' ' '_' '0'-'9']*
 let char = '\'' ['a'-'z'] '\''
-let str = '\"' letter+ '\"'
+let str = '\"' letter_space+ '\"'
 let ident = letter+
 
 rule read =
@@ -26,6 +27,7 @@ rule read =
   | white { read lexbuf }
   | newl { new_line read lexbuf }
   | ";" { SEMICOLON }
+  | "++" { PLUSPLUS }
   | "+" { PLUS }
   | "-" { MINUS }
   | "*" { MULT }

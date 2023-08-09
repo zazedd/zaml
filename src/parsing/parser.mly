@@ -31,6 +31,7 @@
 %token DOTDOT
 %token BAR
 
+%token PLUSPLUS
 %token PLUS
 %token MINUS
 %token MULT
@@ -96,6 +97,7 @@ expr:
 
 bop:
   | PLUS { Add }
+  | PLUSPLUS { Concat }
   | MINUS { Subt }
   | MULT { Mult }
   | DIV { Div }

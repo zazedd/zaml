@@ -65,7 +65,7 @@ dune runtest
     - [ ] > , =>
     - [ ] <, =<
   - [ ] String ops
-    - [ ] ^ (string concat)
+    - [x] ++ (string concat)
     - [ ] ==
     - [ ] !=
     - [ ] > , =>

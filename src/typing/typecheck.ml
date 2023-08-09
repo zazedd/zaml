@@ -79,12 +79,13 @@ and typeof_bop ctx op e1 e2 pos =
   | (Div as op), t1, t2
   | (Mod as op), t1, t2 ->
       typeof_bop_int ctx op t1 t2 pos
+  | Concat, t1, t2 -> unify_bop ctx t1 t2 TString TString pos
   | Eq, t1, t2 -> unify_bop ctx t1 t2 TInt TBool pos
 
 and typeof_bop_int ctx op t1 t2 pos =
   match op with
   | Add | Subt | Mult | Div | Mod -> unify_bop ctx t1 t2 TInt TInt pos
-  | Eq -> assert false
+  | Concat | Eq -> assert false
 
 and typeof_let ctx name binding in_body =
   enter_level ();

@@ -1,6 +1,6 @@
 open Common
 
-type op = Add | Subt | Mult | Div | Mod | Eq
+type op = Add | Subt | Mult | Div | Mod | Concat | Eq
 type vals = Unit | Int of int | Char of char | String of string | Bool of bool
 
 type t =

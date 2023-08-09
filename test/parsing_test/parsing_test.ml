@@ -72,11 +72,11 @@ let%test "char variable" =
   | _ -> false
 
 let%test "string variable" =
-  match test "let a = \"testing\"" with
+  match test "let a = \"testing stuff\"" with
   | Let
       {
         name = "a";
-        binding = { expr = Const (String "testing"); _ };
+        binding = { expr = Const (String "testing stuff"); _ };
         in_body = None;
       } ->
       true
