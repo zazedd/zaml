@@ -234,6 +234,20 @@ let%test "unify unbound vars with equals2" =
   | exception TypeError _ -> true
   | _ -> false
 
+let%test "unify unbound vars with not equals" =
+  match
+    test "let f a b = if a != b then b + 1 else a ++ \"test\"" Ctx.empty
+  with
+  | exception TypeError _ -> true
+  | _ -> false
+
+let%test "unify unbound vars with not equals2" =
+  match
+    test "let f a b = if a != b then a + 1 else b ++ \"test\"" Ctx.empty
+  with
+  | exception TypeError _ -> true
+  | _ -> false
+
 let () =
   "Typing tests completed. Time elapsed: "
   ^ string_of_float ((Sys.time () -. start_time) *. 1000.)
