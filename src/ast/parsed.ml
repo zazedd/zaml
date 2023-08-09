@@ -1,7 +1,7 @@
 open Common
 
 type op = Add | Subt | Mult | Div | Mod | Eq
-type vals = Unit | Int of int | Char of char | Bool of bool
+type vals = Unit | Int of int | Char of char | String of string | Bool of bool
 
 type t =
   | Const of vals
@@ -33,6 +33,7 @@ let string_of_const = function
   | Unit -> "unit"
   | Int i -> "int : " ^ string_of_int i
   | Char c -> "char : '" ^ String.make 1 c ^ "'"
+  | String s -> "string : " ^ s
   | Bool b -> "bool : " ^ string_of_bool b
 
 let rec string_of_ast = function

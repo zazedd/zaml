@@ -24,7 +24,7 @@ let new_arrows ctx' vars t_e =
 
 (* Delayed occurs check to prevent cyclic types. Runs at the end of the typecheck *)
 let rec cycle_free = function
-  | TUnit | TInt | TChar | TBool | TVar { contents = Unbound _ } -> ()
+  | TUnit | TInt | TChar | TString | TBool | TVar { contents = Unbound _ } -> ()
   | TVar { contents = Link ty } -> cycle_free ty
   | TArrow (_, _, ls) when ls.new_level = marked_level ->
       occur_error "cycle_free: Variable occurs inside its definition"
@@ -49,6 +49,7 @@ and typeof_const ctx = function
   | Unit -> (TUnit, ctx)
   | Int _ -> (TInt, ctx)
   | Char _ -> (TChar, ctx)
+  | String _ -> (TString, ctx)
   | Bool _ -> (TBool, ctx)
 
 and typeof_if ctx e1 e2 e3 pos =

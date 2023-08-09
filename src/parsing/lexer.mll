@@ -8,6 +8,8 @@
     lexbuf.lex_curr_p <- newpos;
     lexbuf.lex_start_p <- newpos;
     f lexbuf
+
+  let make_string str = String.sub str 1 (String.length str - 2)
 }
 
 let white = [' ' '\t']+
@@ -16,6 +18,7 @@ let digit = ['0'-'9']
 let int = '-'? digit+
 let letter = ['_' 'a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '_' '0'-'9']*
 let char = '\'' ['a'-'z'] '\''
+let str = '\"' letter+ '\"'
 let ident = letter+
 
 rule read =
@@ -50,6 +53,7 @@ rule read =
   | "|" { BAR }
   | ".." { DOTDOT }
   | char { CHAR ( Lexing.lexeme_char lexbuf 1 )}
+  | str { STR ( Lexing.lexeme lexbuf |> make_string )}
   | ident { IDENT ( Lexing.lexeme lexbuf ) }
   | int { INT ( Lexing.lexeme lexbuf |> int_of_string ) }
   | eof { EOF }

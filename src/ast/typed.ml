@@ -11,6 +11,7 @@ type typ =
   | TUnit
   | TInt
   | TChar
+  | TString
   | TBool
   | TVar of tvar ref
   | TArrow of typ * typ * levels
@@ -36,6 +37,7 @@ let string_of_typ t =
     | TUnit -> "unit"
     | TInt -> "int"
     | TChar -> "char"
+    | TString -> "string"
     | TBool -> "bool"
     | TVar { contents = Link t } -> go current tbl t
     | TVar { contents = Unbound (n, _) } -> (
@@ -59,6 +61,7 @@ let string_of_typ2 t =
     | TUnit -> "unit"
     | TInt -> "int"
     | TChar -> "char"
+    | TString -> "string"
     | TBool -> "bool"
     | TVar { contents = Link t } -> "TVar link : " ^ go current tbl t
     | TVar { contents = Unbound (n, l) } -> (

@@ -1,4 +1,5 @@
-let _ = fun x -> fun y -> fun k -> k (k x y) (k y x)
-let _ = fun x -> fun y -> let x = x y in fun x -> y x
-let , if true thn 3 else 4
-let _ = fun x -> let y = let z = x (fun x -> x) in z in y
+let f1 = fun x -> fun y -> fun k -> k (k x y) (k y x)
+let f2 = fun x -> fun y -> let x = x y in fun x -> y x
+let f4 = fun x -> let y = let z = x (fun x -> x) in z in y
+
+let res_f1 = f1 5 10 (fun a b -> a + b)

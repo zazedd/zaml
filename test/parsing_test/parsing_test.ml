@@ -10,6 +10,9 @@ let%test "unit" = match test "()" with Const Unit -> true | _ -> false
 let%test "int" = match test "10" with Const (Int 10) -> true | _ -> false
 let%test "char" = match test "'a'" with Const (Char 'a') -> true | _ -> false
 
+let%test "string" =
+  match test "\"testing\"" with Const (String "testing") -> true | _ -> false
+
 let%test "bool" =
   match test "true" with Const (Bool true) -> true | _ -> false
 
@@ -65,6 +68,17 @@ let%test "char variable" =
   match test "let a = 'a'" with
   | Let { name = "a"; binding = { expr = Const (Char 'a'); _ }; in_body = None }
     ->
+      true
+  | _ -> false
+
+let%test "string variable" =
+  match test "let a = \"testing\"" with
+  | Let
+      {
+        name = "a";
+        binding = { expr = Const (String "testing"); _ };
+        in_body = None;
+      } ->
       true
   | _ -> false
 

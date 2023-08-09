@@ -11,7 +11,7 @@ open Ast.Typed
   Works like a generational garbage collector.
 *)
 let update_level l = function
-  | TUnit | TInt | TChar | TBool -> ()
+  | TUnit | TInt | TChar | TString | TBool -> ()
   | TVar ({ contents = Unbound (n, l') } as var) ->
       assert (l' != generic_level);
       if l < l' then var := Unbound (n, l)

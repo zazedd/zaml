@@ -10,6 +10,7 @@ and value =
   | VUnit
   | VInt of int
   | VChar of char
+  | VString of string
   | VBool of bool
   | Closure of { vars : variable list; body : expr; context : ectx }
 

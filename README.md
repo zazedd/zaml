@@ -85,7 +85,7 @@ dune runtest
   - [x] Bool
   - [x] Char
   - [ ] Float
-  - [ ] String
+  - [x] String
   - [x] Var
   - [x] Arrow (x -> y)
   - [ ] Product (tuples)
