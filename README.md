@@ -1,4 +1,4 @@
-![](.github/zaml.png)
+![](.github/logo.png)
 
 A type inferred, statically-typed functional programming language inspired by OCaml
 
