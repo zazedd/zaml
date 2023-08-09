@@ -1,0 +1,1 @@
+let not a = if a then false else true

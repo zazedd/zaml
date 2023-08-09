@@ -1,2 +1,3 @@
 (library
- (name zaml))
+ (name lib)
+ (libraries ast typing parsing evaluating))

@@ -1,4 +1,4 @@
 (executable
  (public_name zaml)
  (name main)
- (libraries zaml ast parsing typing repl interpreter evaluating))
+ (libraries lib ast parsing typing repl interpreter evaluating))

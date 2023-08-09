@@ -1,9 +1,10 @@
-open Typing.Env
-open Evaluating.Env
+open Lib.Stdlib
 
 let handle_args () =
   match Array.length Sys.argv with
-  | 1 -> Repl.Cli.run Ctx.empty ECtx.empty
+  | 1 ->
+      let t_ctx, e_ctx = stdlib_ctx () in
+      Repl.Cli.run t_ctx e_ctx
   | 2 -> (
       let arg = Sys.argv.(1) in
       match Filename.extension arg with

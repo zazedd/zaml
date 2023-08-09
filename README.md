@@ -51,7 +51,7 @@ dune runtest
 - [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
 - [ ] Standard library
   - [ ] Universal `print` function
-  - [ ] ! (or `not`, function for booleans)
+  - [x] ! (or `not`, function for booleans)
   - [ ] Figure out what else to include
 - [ ] Binary operators
   - [x] Universal ops
