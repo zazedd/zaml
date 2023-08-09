@@ -78,17 +78,10 @@ and reset_level t =
       reset_level t2
   | _ -> ()
 
-let unify_bop ctx t1 t2 branches output pos =
+let unify_bop ctx t1 t2 output pos =
   match (t1, t2) with
-  | b1, b2 when b1 = branches && b2 = branches -> (output, ctx)
-  | (TVar _ as v), b1 when b1 = branches ->
-      unify v v branches pos;
-      (output, ctx)
-  | b2, (TVar _ as v) when b2 = branches ->
-      unify v v branches pos;
-      (output, ctx)
-  | (TVar _ as v1), (TVar _ as v2) ->
-      unify v1 v1 branches pos;
-      unify v2 v2 branches pos;
+  | b1, b2 when b1 = b2 -> (output, ctx)
+  | (TVar _ as v), b1 | b1, (TVar _ as v) ->
+      unify v v b1 pos;
       (output, ctx)
   | t1, t2 -> op_error t1 t2 pos

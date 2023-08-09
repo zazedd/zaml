@@ -54,22 +54,19 @@ dune runtest
   - [ ] ! (or `not`, function for booleans)
   - [ ] Figure out what else to include
 - [ ] Binary operators
+  - [ ] Universal ops
+    - [x] ==
+    - [ ] !=
   - [ ] Int ops
     - [x] +
     - [x] -
     - [x] *
     - [x] /
     - [x] %
-    - [x] ==
-    - [ ] !=
     - [ ] > , =>
     - [ ] <, =<
   - [ ] String ops
     - [x] ++ (string concat)
-    - [ ] ==
-    - [ ] !=
-    - [ ] > , =>
-    - [ ] <, =<
 - [ ] Garbage Collection
 
 -> Types
