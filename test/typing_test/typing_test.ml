@@ -176,6 +176,19 @@ let%test "partial app" =
   in
   match test "f 1" ctx |> string_of_typ with "int -> int" -> true | _ -> false
 
+let%test "partial app char" =
+  let ctx =
+    Parsing.Parse.from_string
+      "let f a b = if a then b else 'z'; let f2 = f true"
+    |> Parsing.Parse.parse
+    |> List.fold_left
+         (fun acc a ->
+           let _, newctx = Typing.Typecheck.type_check acc a in
+           Ctx.merge (fun _ _ x -> x) acc newctx)
+         Ctx.empty
+  in
+  match test "f2 'b'" ctx |> string_of_typ with "char" -> true | _ -> false
+
 let%test "wrong_application" =
   match test "let _ = 1 2" Ctx.empty with
   | exception TypeError _ -> true

@@ -10,6 +10,7 @@ let marked_level = -1
 type typ =
   | TUnit
   | TInt
+  | TChar
   | TBool
   | TVar of tvar ref
   | TArrow of typ * typ * levels
@@ -33,8 +34,9 @@ let rec is_paren = function
 let string_of_typ t =
   let rec go current tbl = function
     | TUnit -> "unit"
-    | TBool -> "bool"
     | TInt -> "int"
+    | TChar -> "char"
+    | TBool -> "bool"
     | TVar { contents = Link t } -> go current tbl t
     | TVar { contents = Unbound (n, _) } -> (
         match Tbl.find_opt tbl n with
@@ -55,8 +57,9 @@ let string_of_typ t =
 let string_of_typ2 t =
   let rec go current tbl = function
     | TUnit -> "unit"
-    | TBool -> "bool"
     | TInt -> "int"
+    | TChar -> "char"
+    | TBool -> "bool"
     | TVar { contents = Link t } -> "TVar link : " ^ go current tbl t
     | TVar { contents = Unbound (n, l) } -> (
         match Tbl.find_opt tbl n with

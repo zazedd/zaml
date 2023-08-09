@@ -9,6 +9,7 @@ type ectx = value ECtx.t
 and value =
   | VUnit
   | VInt of int
+  | VChar of char
   | VBool of bool
   | Closure of { vars : variable list; body : expr; context : ectx }
 

@@ -11,7 +11,7 @@ open Ast.Typed
   Works like a generational garbage collector.
 *)
 let update_level l = function
-  | TUnit | TInt | TBool -> ()
+  | TUnit | TInt | TChar | TBool -> ()
   | TVar ({ contents = Unbound (n, l') } as var) ->
       assert (l' != generic_level);
       if l < l' then var := Unbound (n, l)
@@ -22,7 +22,7 @@ let update_level l = function
         if ls.new_level = ls.old_level then
           to_be_level_adjusted := t :: !to_be_level_adjusted;
         ls.new_level <- l)
-  | _ -> assert false
+  | TVar _ -> assert false
 
 (*
   Unifying a free variable tv with a type t takes constant time:

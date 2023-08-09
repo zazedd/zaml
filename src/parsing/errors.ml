@@ -12,7 +12,8 @@ let error_pos pos =
   match pos.fname with
   | "" -> "Syntax Error: " ^ which_chars pos.start pos.ending
   | fname ->
-      Format.sprintf "Syntax Error: File %s on Line %d ->\n\t%s" fname pos.lnum
+      Format.sprintf "Syntax Error: File %s on Line %d ->\n\t      %s" fname
+        pos.lnum
         (which_chars pos.start pos.ending)
 
 let lexing_error (lexbuf : Lexing.lexbuf) c =

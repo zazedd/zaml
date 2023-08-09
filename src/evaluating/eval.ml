@@ -2,11 +2,14 @@ open Ast.Parsed
 open Env
 open Errors
 
-let is_value = function VUnit | VInt _ | VBool _ -> true | _ -> false
+let is_value = function
+  | VUnit | VInt _ | VChar _ | VBool _ -> true
+  | _ -> false
 
 let string_of_val = function
   | VUnit -> "()"
   | VInt i -> string_of_int i
+  | VChar c -> "'" ^ String.make 1 c ^ "'"
   | VBool b -> string_of_bool b
   | Closure _ -> failwith "Not a value"
 
@@ -26,6 +29,7 @@ let rec value_of ctx e =
 and eval_const ctx = function
   | Unit -> (VUnit, ctx)
   | Int v -> (VInt v, ctx)
+  | Char v -> (VChar v, ctx)
   | Bool v -> (VBool v, ctx)
 
 and eval_let ctx name binding in_body =

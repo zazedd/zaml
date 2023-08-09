@@ -8,6 +8,7 @@ let test str =
 
 let%test "unit" = match test "()" with Const Unit -> true | _ -> false
 let%test "int" = match test "10" with Const (Int 10) -> true | _ -> false
+let%test "char" = match test "'a'" with Const (Char 'a') -> true | _ -> false
 
 let%test "bool" =
   match test "true" with Const (Bool true) -> true | _ -> false
@@ -57,6 +58,13 @@ let%test "let fun" =
 let%test "int variable" =
   match test "let a = 9" with
   | Let { name = "a"; binding = { expr = Const (Int 9); _ }; in_body = None } ->
+      true
+  | _ -> false
+
+let%test "char variable" =
+  match test "let a = 'a'" with
+  | Let { name = "a"; binding = { expr = Const (Char 'a'); _ }; in_body = None }
+    ->
       true
   | _ -> false
 

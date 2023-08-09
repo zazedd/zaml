@@ -83,7 +83,7 @@ dune runtest
   - [x] Unit
   - [x] Int
   - [x] Bool
-  - [ ] Char
+  - [x] Char
   - [ ] Float
   - [ ] String
   - [x] Var

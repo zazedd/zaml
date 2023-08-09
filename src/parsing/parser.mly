@@ -8,6 +8,7 @@
 %}
 
 %token <int> INT
+%token <char> CHAR
 %token <string> IDENT
 
 %token LET
@@ -103,6 +104,7 @@ bop:
 
 simple_expr:
   | i = INT { { expr = Const (Int i); pos = position ($loc, $loc(i)) } }
+  | c = CHAR { { expr = Const (Char c); pos = position ($loc, $loc(c)) } }
   | x = IDENT { { expr = Var x; pos = position ($loc, $loc(x)) } }
   | UNIT { { expr = Const Unit; pos = position ($loc, $loc($1)) } }
   | TRUE { { expr = Const (Bool true); pos = position ($loc, $loc($1)) } }

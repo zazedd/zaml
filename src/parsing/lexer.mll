@@ -4,6 +4,9 @@
 
   let new_line f (lexbuf : Lexing.lexbuf) =
     Lexing.new_line lexbuf;
+    let newpos = { lexbuf.lex_curr_p with pos_bol = 0; pos_cnum = 0 } in
+    lexbuf.lex_curr_p <- newpos;
+    lexbuf.lex_start_p <- newpos;
     f lexbuf
 }
 
@@ -12,6 +15,7 @@ let newl = '\n'
 let digit = ['0'-'9']
 let int = '-'? digit+
 let letter = ['_' 'a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '_' '0'-'9']*
+let char = '\'' ['a'-'z'] '\''
 let ident = letter+
 
 rule read =
@@ -45,6 +49,7 @@ rule read =
   | "with" { WITH }
   | "|" { BAR }
   | ".." { DOTDOT }
+  | char { CHAR ( Lexing.lexeme_char lexbuf 1 )}
   | ident { IDENT ( Lexing.lexeme lexbuf ) }
   | int { INT ( Lexing.lexeme lexbuf |> int_of_string ) }
   | eof { EOF }
