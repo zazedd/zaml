@@ -15,9 +15,7 @@ let lookup ctx v =
 
 let rec value_of ctx e =
   match get_expr e with
-  | Unit -> (VUnit, ctx)
-  | Int v -> (VInt v, ctx)
-  | Bool v -> (VBool v, ctx)
+  | Const c -> eval_const ctx c
   | Var v -> lookup ctx v
   | If (e1, e2, e3) -> eval_if ctx e1 e2 e3
   | Bop (op, e1, e2) -> eval_bop ctx op e1 e2
@@ -25,12 +23,10 @@ let rec value_of ctx e =
   | Lambda { vars; body } -> (Closure { vars; body; context = ctx }, ctx)
   | App (e1, e2) -> eval_app ctx e1 e2
 
-(* and eval_bop ctx op e1 e2 = *)
-(*   match (op, eval ctx e1 |> fst, eval ctx e2 |> fst) with *)
-(*   | Add, VInt a, VInt b -> (VInt (a + b), ctx) *)
-(*   | Mult, VInt a, VInt b -> (VInt (a * b), ctx) *)
-(*   | Eq, VInt a, VInt b -> (VBool (a = b), ctx) *)
-(*   | _ -> RuntimeError "Operator requires the same type on both sides" |> raise *)
+and eval_const ctx = function
+  | Unit -> (VUnit, ctx)
+  | Int v -> (VInt v, ctx)
+  | Bool v -> (VBool v, ctx)
 
 and eval_let ctx name binding in_body =
   let v1, newctx = value_of ctx binding in

@@ -102,10 +102,10 @@ bop:
   ;
 
 simple_expr:
-  | i = INT { { expr = Int i; pos = position ($loc, $loc(i)) } }
+  | i = INT { { expr = Const (Int i); pos = position ($loc, $loc(i)) } }
   | x = IDENT { { expr = Var x; pos = position ($loc, $loc(x)) } }
-  | UNIT { { expr = Unit; pos = position ($loc, $loc($1)) } }
-  | TRUE { { expr = Bool true; pos = position ($loc, $loc($1)) } }
-  | FALSE { { expr = Bool false; pos = position ($loc, $loc($1)) } }
+  | UNIT { { expr = Const Unit; pos = position ($loc, $loc($1)) } }
+  | TRUE { { expr = Const (Bool true); pos = position ($loc, $loc($1)) } }
+  | FALSE { { expr = Const (Bool false); pos = position ($loc, $loc($1)) } }
   | LPAREN; e = expr; RPAREN { e }
   ;

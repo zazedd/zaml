@@ -6,23 +6,25 @@ let run () = ()
 let test str =
   Parsing.Parse.from_string str |> Parsing.Parse.parse |> List.hd |> get_expr
 
-let%test "unit" = match test "()" with Unit -> true | _ -> false
-let%test "int" = match test "10" with Int 10 -> true | _ -> false
-let%test "bool" = match test "true" with Bool true -> true | _ -> false
+let%test "unit" = match test "()" with Const Unit -> true | _ -> false
+let%test "int" = match test "10" with Const (Int 10) -> true | _ -> false
+
+let%test "bool" =
+  match test "true" with Const (Bool true) -> true | _ -> false
 
 let%test "bop+" =
   match test "1 + 2" with
-  | Bop (Add, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
+  | Bop (Add, { expr = Const (Int 1); _ }, { expr = Const (Int 2); _ }) -> true
   | _ -> false
 
 let%test "bop*" =
   match test "1 * 2" with
-  | Bop (Mult, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
+  | Bop (Mult, { expr = Const (Int 1); _ }, { expr = Const (Int 2); _ }) -> true
   | _ -> false
 
 let%test "bop==" =
   match test "1 == 2" with
-  | Bop (Eq, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
+  | Bop (Eq, { expr = Const (Int 1); _ }, { expr = Const (Int 2); _ }) -> true
   | _ -> false
 
 let%test "let lambda fun" =
@@ -54,18 +56,22 @@ let%test "let fun" =
 
 let%test "int variable" =
   match test "let a = 9" with
-  | Let { name = "a"; binding = { expr = Int 9; _ }; in_body = None } -> true
+  | Let { name = "a"; binding = { expr = Const (Int 9); _ }; in_body = None } ->
+      true
   | _ -> false
 
 let%test "bool variable" =
   match test "let a = false" with
-  | Let { name = "a"; binding = { expr = Bool false; _ }; in_body = None } ->
+  | Let
+      { name = "a"; binding = { expr = Const (Bool false); _ }; in_body = None }
+    ->
       true
   | _ -> false
 
 let%test "unit variable" =
   match test "let a = ()" with
-  | Let { name = "a"; binding = { expr = Unit; _ }; in_body = None } -> true
+  | Let { name = "a"; binding = { expr = Const Unit; _ }; in_body = None } ->
+      true
   | _ -> false
 
 let%test "let in" =
@@ -73,7 +79,7 @@ let%test "let in" =
   | Let
       {
         name = "a";
-        binding = { expr = Int 420; _ };
+        binding = { expr = Const (Int 420); _ };
         in_body = Some { expr = Var "a"; _ };
       } ->
       true

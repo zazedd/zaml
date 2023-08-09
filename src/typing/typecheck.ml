@@ -36,9 +36,7 @@ let rec cycle_free = function
       ls.new_level <- level
 
 let rec typeof ctx = function
-  | { expr = Unit; _ } -> (TUnit, ctx)
-  | { expr = Int _; _ } -> (TInt, ctx)
-  | { expr = Bool _; _ } -> (TBool, ctx)
+  | { expr = Const c; _ } -> typeof_const ctx c
   | { expr = Var x; pos } -> lookup ctx x pos
   | { expr = If (e1, e2, e3); pos } -> typeof_if ctx e1 e2 e3 pos
   | { expr = Bop (op, e1, e2); pos } -> typeof_bop ctx op e1 e2 pos
@@ -46,6 +44,11 @@ let rec typeof ctx = function
       typeof_let ctx name binding in_body
   | { expr = Lambda { vars; body }; _ } -> typeof_lambda ctx vars body
   | { expr = App (e1, e2); pos } -> typeof_app ctx e1 e2 pos
+
+and typeof_const ctx = function
+  | Unit -> (TUnit, ctx)
+  | Int _ -> (TInt, ctx)
+  | Bool _ -> (TBool, ctx)
 
 and typeof_if ctx e1 e2 e3 pos =
   match typeof ctx e1 |> fst |> head with

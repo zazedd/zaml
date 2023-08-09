@@ -1,11 +1,10 @@
 open Common
 
 type op = Add | Subt | Mult | Div | Mod | Eq
+type vals = Unit | Int of int | Bool of bool
 
 type t =
-  | Unit
-  | Int of int
-  | Bool of bool
+  | Const of vals
   | Var of variable
   | If of expr * expr * expr
   | Bop of op * expr * expr
@@ -30,10 +29,13 @@ let position
     ending = ends.pos_cnum + 1;
   }
 
+let string_of_const = function
+  | Unit -> "unit"
+  | Int i -> "int : " ^ string_of_int i
+  | Bool b -> "bool : " ^ string_of_bool b
+
 let rec string_of_ast = function
-  | { expr = Unit; _ } -> "unit"
-  | { expr = Int i; _ } -> "int : " ^ string_of_int i
-  | { expr = Bool b; _ } -> "bool : " ^ string_of_bool b
+  | { expr = Const c; _ } -> string_of_const c
   | { expr = Var s; _ } -> "var name : " ^ s
   | { expr = Let { name; binding; in_body }; _ } -> (
       "let : name : " ^ name ^ "\n" ^ string_of_ast binding
