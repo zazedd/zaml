@@ -54,7 +54,7 @@ dune runtest
   - [ ] ! (or `not`, function for booleans)
   - [ ] Figure out what else to include
 - [ ] Binary operators
-  - [ ] Universal ops
+  - [x] Universal ops
     - [x] ==
     - [x] !=
   - [ ] Int ops
