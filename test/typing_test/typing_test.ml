@@ -217,8 +217,22 @@ let%test "occur_error2" =
 
 let%test "cycle_free bug" =
   match test "let f a b = if a then b else 1; f true true; f" Ctx.empty with
-  | exception _ -> false
+  | exception TypeError _ -> false
   | _ -> true
+
+let%test "unify unbound vars with equals" =
+  match
+    test "let f a b = if a == b then b + 1 else a ++ \"test\"" Ctx.empty
+  with
+  | exception TypeError _ -> true
+  | _ -> false
+
+let%test "unify unbound vars with equals2" =
+  match
+    test "let f a b = if a == b then a + 1 else b ++ \"test\"" Ctx.empty
+  with
+  | exception TypeError _ -> true
+  | _ -> false
 
 let () =
   "Typing tests completed. Time elapsed: "
