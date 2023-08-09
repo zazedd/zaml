@@ -1,5 +1,4 @@
-![](.github/logo.png)
-
+<img src=".github/logo.png" width=15% height=15%>
 A type inferred, statically-typed functional programming language inspired by OCaml
 
 ## Documentation
