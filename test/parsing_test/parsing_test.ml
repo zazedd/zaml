@@ -3,57 +3,30 @@ open Ast.Parsed
 let start_time = Sys.time ()
 let run () = ()
 
-let%test "unit" =
-  match
-    Parsing.Parse.from_string "()" |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
-  | Unit -> true
-  | _ -> false
+let test str =
+  Parsing.Parse.from_string str |> Parsing.Parse.parse |> List.hd |> get_expr
 
-let%test "int" =
-  match
-    Parsing.Parse.from_string "10" |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
-  | Int 10 -> true
-  | _ -> false
-
-let%test "bool" =
-  match
-    Parsing.Parse.from_string "true"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
-  | Bool true -> true
-  | _ -> false
+let%test "unit" = match test "()" with Unit -> true | _ -> false
+let%test "int" = match test "10" with Int 10 -> true | _ -> false
+let%test "bool" = match test "true" with Bool true -> true | _ -> false
 
 let%test "bop+" =
-  match
-    Parsing.Parse.from_string "1 + 2"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "1 + 2" with
   | Bop (Add, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
   | _ -> false
 
 let%test "bop*" =
-  match
-    Parsing.Parse.from_string "1 * 2"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "1 * 2" with
   | Bop (Mult, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
   | _ -> false
 
 let%test "bop==" =
-  match
-    Parsing.Parse.from_string "1 == 2"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "1 == 2" with
   | Bop (Eq, { expr = Int 1; _ }, { expr = Int 2; _ }) -> true
   | _ -> false
 
 let%test "let lambda fun" =
-  match
-    Parsing.Parse.from_string "let f = fun x -> x"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "let f = fun x -> x" with
   | Let
       {
         name = "f";
@@ -65,10 +38,7 @@ let%test "let lambda fun" =
   | _ -> false
 
 let%test "let fun" =
-  match
-    Parsing.Parse.from_string "let f x = x"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "let f x = x" with
   | Let
       {
         name = "f";
@@ -83,35 +53,23 @@ let%test "let fun" =
   | _ -> false
 
 let%test "int variable" =
-  match
-    Parsing.Parse.from_string "let a = 9"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "let a = 9" with
   | Let { name = "a"; binding = { expr = Int 9; _ }; in_body = None } -> true
   | _ -> false
 
 let%test "bool variable" =
-  match
-    Parsing.Parse.from_string "let a = false"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "let a = false" with
   | Let { name = "a"; binding = { expr = Bool false; _ }; in_body = None } ->
       true
   | _ -> false
 
 let%test "unit variable" =
-  match
-    Parsing.Parse.from_string "let a = ()"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "let a = ()" with
   | Let { name = "a"; binding = { expr = Unit; _ }; in_body = None } -> true
   | _ -> false
 
 let%test "let in" =
-  match
-    Parsing.Parse.from_string "let a = 420 in a"
-    |> Parsing.Parse.parse |> List.hd |> get_expr
-  with
+  match test "let a = 420 in a" with
   | Let
       {
         name = "a";
@@ -122,7 +80,7 @@ let%test "let in" =
   | _ -> false
 
 let () =
-  "Parsing tests completed sucessfuly. Time elapsed: "
+  "Parsing tests completed. Time elapsed: "
   ^ string_of_float ((Sys.time () -. start_time) *. 1000.)
   ^ "ms"
   |> print_endline

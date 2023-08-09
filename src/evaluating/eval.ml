@@ -51,21 +51,52 @@ and eval_if ctx e1 e2 e3 =
 and eval_bop ctx op e1 e2 =
   match (op, value_of ctx e1 |> fst, value_of ctx e2 |> fst) with
   | Add, VInt a, VInt b -> (VInt (a + b), ctx)
+  | Subt, VInt a, VInt b -> (VInt (a - b), ctx)
   | Mult, VInt a, VInt b -> (VInt (a * b), ctx)
+  | Div, VInt a, VInt b -> (VInt (a / b), ctx)
+  | Mod, VInt a, VInt b -> (VInt (a mod b), ctx)
   | Eq, VInt a, VInt b -> (VBool (a = b), ctx)
   | _ -> op_error ()
 
 and eval_app ctx e1 e2 =
   let e, ctx' = value_of ctx e1 in
   match e with
-  | Closure { vars; body; context } ->
-      if List.length vars <> List.length e2 then partial_app_error ();
-      let body_env =
-        List.fold_left2
-          (fun acc var exp ->
-            let v, _ = value_of ctx' exp in
-            ECtx.add var v acc)
-          context vars e2
-      in
-      (value_of body_env body |> fst, ctx)
+  | Closure { vars; body; context } -> (
+      match compare (List.length vars) (List.length e2) with
+      | 0 ->
+          let body_env =
+            List.fold_left2
+              (fun acc var exp ->
+                let v, _ = value_of ctx' exp in
+                ECtx.add var v acc)
+              context vars e2
+          in
+          (value_of body_env body |> fst, ctx)
+      | a when a > 0 ->
+          (* partial application *)
+          let binded_vars = get_binded_vars (List.length e2) [] vars in
+          let remaining_vars = get_remaining_vars (List.length e2) vars in
+          let body_env =
+            List.fold_left2
+              (fun acc var exp ->
+                let v, _ = value_of ctx' exp in
+                ECtx.add var v acc)
+              context binded_vars e2
+          in
+          let partial_closure =
+            Closure { vars = remaining_vars; body; context = body_env }
+          in
+          (partial_closure, ctx)
+      | _ -> too_many_args (List.length vars))
   | _ -> app_error ()
+
+and get_binded_vars n acc lst =
+  if n <= 0 then acc |> List.rev
+  else
+    match lst with
+    | [] -> acc
+    | x :: xs -> get_binded_vars (n - 1) (x :: acc) xs
+
+and get_remaining_vars n lst =
+  if n <= 0 then lst
+  else match lst with [] -> [] | _ :: xs -> get_remaining_vars (n - 1) xs

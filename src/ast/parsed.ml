@@ -1,6 +1,6 @@
 open Common
 
-type op = Add | Mult | Eq
+type op = Add | Subt | Mult | Div | Mod | Eq
 
 type t =
   | Unit

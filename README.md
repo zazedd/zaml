@@ -32,7 +32,6 @@ dune runtest
 
 -> Next-up
 
-- [ ] Partial Applications
 - [ ] Better Syntax Errors
   - [x] Line Positions
   - [ ] Character Positions
@@ -47,31 +46,31 @@ dune runtest
 - [ ] Let tuple with destructuring
 - [x] Lambda expressions
 - [x] If expressions
+- [x] Partial Applications
 - [ ] Match expressions
 - [ ] Algebraic effects
 - [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
 - [ ] Standard library
   - [ ] Universal `print` function
+  - [ ] ! (or `not`, function for booleans)
   - [ ] Figure out what else to include
 - [ ] Binary operators
   - [ ] Int ops
     - [x] +
-    - [ ] -
+    - [x] -
     - [x] *
-    - [ ] /
-    - [ ] %
+    - [x] /
+    - [x] %
     - [x] ==
     - [ ] !=
     - [ ] > , =>
     - [ ] <, =<
-  - [ ] String op
+  - [ ] String ops
     - [ ] ^ (string concat)
     - [ ] ==
     - [ ] !=
     - [ ] > , =>
     - [ ] <, =<
-  - [ ] Bool ops
-    - [ ] !
 - [ ] Garbage Collection
 
 -> Types

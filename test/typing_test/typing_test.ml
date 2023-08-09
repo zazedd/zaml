@@ -5,133 +5,87 @@ open Typing.Errors
 let start_time = Sys.time ()
 let run () = ()
 
-let%test "unit" =
-  match
-    Parsing.Parse.from_string "()"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TUnit -> true
-  | _ -> false
+let test str ctx =
+  Parsing.Parse.from_string str
+  |> Parsing.Parse.parse |> List.hd
+  |> Typing.Typecheck.type_check ctx
+  |> fst
 
-let%test "int" =
-  match
-    Parsing.Parse.from_string "10"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TInt -> true
-  | _ -> false
-
-let%test "bool" =
-  match
-    Parsing.Parse.from_string "true"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TBool -> true
-  | _ -> false
-
-let%test "bop+" =
-  match
-    Parsing.Parse.from_string "1 + 2"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TInt -> true
-  | _ -> false
-
-let%test "bop*" =
-  match
-    Parsing.Parse.from_string "1 * 2"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TInt -> true
-  | _ -> false
+let%test "unit" = match test "()" Ctx.empty with TUnit -> true | _ -> false
+let%test "int" = match test "10" Ctx.empty with TInt -> true | _ -> false
+let%test "bool" = match test "true" Ctx.empty with TBool -> true | _ -> false
+let%test "bop+" = match test "1 + 2" Ctx.empty with TInt -> true | _ -> false
+let%test "bop*" = match test "1 * 2" Ctx.empty with TInt -> true | _ -> false
 
 let%test "bop==" =
-  match
-    Parsing.Parse.from_string "1 == 2"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TBool -> true
-  | _ -> false
+  match test "1 == 2" Ctx.empty with TBool -> true | _ -> false
+
+let%test "bop-" = match test "1 - 2" Ctx.empty with TInt -> true | _ -> false
+let%test "bop/" = match test "1 / 2" Ctx.empty with TInt -> true | _ -> false
+let%test "bop%" = match test "1 % 2" Ctx.empty with TInt -> true | _ -> false
 
 let%test "fun bop+" =
-  match
-    Parsing.Parse.from_string "let f a = a + 1"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f a = a + 1" Ctx.empty |> string_of_typ with
   | "int -> int" -> true
   | _ -> false
 
 let%test "fun bop+2" =
-  match
-    Parsing.Parse.from_string "let f a = 1 + a"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f a = 1 + a" Ctx.empty |> string_of_typ with
   | "int -> int" -> true
   | _ -> false
 
 let%test "fun bop*" =
-  match
-    Parsing.Parse.from_string "let f a = 1 * a"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f a = 1 * a" Ctx.empty |> string_of_typ with
   | "int -> int" -> true
   | _ -> false
 
 let%test "fun bop*2" =
-  match
-    Parsing.Parse.from_string "let f a = a * 1"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f a = a * 1" Ctx.empty |> string_of_typ with
   | "int -> int" -> true
   | _ -> false
 
 let%test "fun bop==" =
-  match
-    Parsing.Parse.from_string "let f a = a == 1"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f a = a == 1" Ctx.empty |> string_of_typ with
   | "int -> bool" -> true
   | _ -> false
 
 let%test "fun bop==2" =
-  match
-    Parsing.Parse.from_string "let f a = 1 == a"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f a = 1 == a" Ctx.empty |> string_of_typ with
   | "int -> bool" -> true
   | _ -> false
 
+let%test "fun bop-" =
+  match test "let f a = a - 1" Ctx.empty |> string_of_typ with
+  | "int -> int" -> true
+  | _ -> false
+
+let%test "fun bop-2" =
+  match test "let f a = 1 - a" Ctx.empty |> string_of_typ with
+  | "int -> int" -> true
+  | _ -> false
+
+let%test "fun bop/" =
+  match test "let f a = a / 1" Ctx.empty |> string_of_typ with
+  | "int -> int" -> true
+  | _ -> false
+
+let%test "fun bop/2" =
+  match test "let f a = 1 / a" Ctx.empty |> string_of_typ with
+  | "int -> int" -> true
+  | _ -> false
+
+let%test "fun bop%" =
+  match test "let f a = a % 1" Ctx.empty |> string_of_typ with
+  | "int -> int" -> true
+  | _ -> false
+
+let%test "fun bop%2" =
+  match test "let f a = 1 % a" Ctx.empty |> string_of_typ with
+  | "int -> int" -> true
+  | _ -> false
+
 let%test "let lambda fun" =
-  match
-    Parsing.Parse.from_string "let f = fun x -> x"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
+  match test "let f = fun x -> x" Ctx.empty with
   | TArrow
       ( TVar { contents = Unbound ("'a", 100000000) },
         TVar { contents = Unbound ("'a", 100000000) },
@@ -140,152 +94,90 @@ let%test "let lambda fun" =
   | _ -> false
 
 let%test "let fun" =
-  match
-    Parsing.Parse.from_string "let f x = x"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "let f x = x" Ctx.empty |> string_of_typ with
   | "'a -> 'a" -> true
   | _ -> false
 
 let%test "int variable" =
-  match
-    Parsing.Parse.from_string "let a = 9"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TInt -> true
-  | _ -> false
+  match test "let a = 9" Ctx.empty with TInt -> true | _ -> false
 
 let%test "bool variable" =
-  match
-    Parsing.Parse.from_string "let a = false"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TBool -> true
-  | _ -> false
+  match test "let a = false" Ctx.empty with TBool -> true | _ -> false
 
 let%test "unit variable" =
-  match
-    Parsing.Parse.from_string "let a = ()"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TUnit -> true
-  | _ -> false
+  match test "let a = ()" Ctx.empty with TUnit -> true | _ -> false
 
 let%test "let in" =
-  match
-    Parsing.Parse.from_string "let a = 420 in a"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
-  | TInt -> true
-  | _ -> false
+  match test "let a = 420 in a" Ctx.empty with TInt -> true | _ -> false
 
 let%test "apply" =
-  match
-    Parsing.Parse.from_string "let a = let f b = b in f true"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst
-  with
+  match test "let a = let f b = b in f true" Ctx.empty with
   | TVar { contents = Link TBool } -> true
   | _ -> false
 
 let%test "if1" =
-  match
-    Parsing.Parse.from_string "fun a b c -> if a then b else c"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "fun a b c -> if a then b else c" Ctx.empty |> string_of_typ with
   | "bool -> 'a -> 'a -> 'a" -> true
   | _ -> false
 
 let%test "if2" =
-  match
-    Parsing.Parse.from_string "fun a b -> if a then b else 1"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "fun a b -> if a then b else 1" Ctx.empty |> string_of_typ with
   | "bool -> int -> int" -> true
   | _ -> false
 
 let%test "if3" =
-  match
-    Parsing.Parse.from_string "fun a b -> if a then false else b"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
-  with
+  match test "fun a b -> if a then false else b" Ctx.empty |> string_of_typ with
   | "bool -> bool -> bool" -> true
   | _ -> false
 
 let%test "fun1" =
   match
-    Parsing.Parse.from_string "fun x -> fun y -> fun k -> k (k x y) (k y x)"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
+    test "fun x -> fun y -> fun k -> k (k x y) (k y x)" Ctx.empty
+    |> string_of_typ
   with
   | "'a -> 'a -> ('a -> 'a -> 'a) -> 'a" -> true
   | _ -> false
 
 let%test "fun2" =
   match
-    Parsing.Parse.from_string "fun x -> fun y -> let x = x y in fun x -> y x"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
+    test "fun x -> fun y -> let x = x y in fun x -> y x" Ctx.empty
+    |> string_of_typ
   with
   | "(('a -> 'b) -> 'c) -> ('a -> 'b) -> 'a -> 'b" -> true
   | _ -> false
 
 let%test "fun2" =
   match
-    Parsing.Parse.from_string
-      "fun x -> let y = let z = x (fun x -> x) in z in y"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
+    test "fun x -> let y = let z = x (fun x -> x) in z in y" Ctx.empty
+    |> string_of_typ
   with
   | "(('a -> 'a) -> 'b) -> 'b" -> true
   | _ -> false
 
 let%test "if_branches1" =
   match
-    Parsing.Parse.from_string "let f a b = if a == 2 then b else b + 1"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
+    test "let f a b = if a == 2 then b else b + 1" Ctx.empty |> string_of_typ
   with
   | "int -> int -> int" -> true
   | _ -> false
 
 let%test "if_branches1" =
   match
-    Parsing.Parse.from_string "let f a b = if a == 2 then b + 1 else b"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-    |> fst |> string_of_typ
+    test "let f a b = if a == 2 then b + 1 else b" Ctx.empty |> string_of_typ
   with
   | "int -> int -> int" -> true
   | _ -> false
 
-let%test "wrong_application" =
-  match
-    Parsing.Parse.from_string "let _ = 1 2"
+let%test "partial app" =
+  let _, ctx =
+    Parsing.Parse.from_string "let f a b = if a == 2 then b + 1 else b"
     |> Parsing.Parse.parse |> List.hd
     |> Typing.Typecheck.type_check Ctx.empty
-  with
+  in
+  match test "f 1" ctx |> string_of_typ with "int -> int" -> true | _ -> false
+
+let%test "wrong_application" =
+  match test "let _ = 1 2" Ctx.empty with
   | exception TypeError _ -> true
   | (exception _) | _ -> false
 
@@ -301,34 +193,22 @@ let%test "wrong_application2" =
   | (exception _) | _ -> false
 
 let%test "occur_error1" =
-  match
-    Parsing.Parse.from_string "let _ = fun y -> y (fun z -> y z)"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-  with
+  match test "let _ = fun y -> y (fun z -> y z)" Ctx.empty with
   | exception OccurCheck _ -> true
   | (exception _) | _ -> false
 
 let%test "occur_error2" =
-  match
-    Parsing.Parse.from_string "let f y = y (fun z -> y z)"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-  with
+  match test "let f y = y (fun z -> y z)" Ctx.empty with
   | exception OccurCheck _ -> true
   | (exception _) | _ -> false
 
 let%test "cycle_free bug" =
-  match
-    Parsing.Parse.from_string "let f a b = if a then b else 1; f true true; f"
-    |> Parsing.Parse.parse |> List.hd
-    |> Typing.Typecheck.type_check Ctx.empty
-  with
+  match test "let f a b = if a then b else 1; f true true; f" Ctx.empty with
   | exception _ -> false
   | _ -> true
 
 let () =
-  "Typing tests completed sucessfuly. Time elapsed: "
+  "Typing tests completed. Time elapsed: "
   ^ string_of_float ((Sys.time () -. start_time) *. 1000.)
   ^ "ms"
   |> print_endline

@@ -68,13 +68,17 @@ and if_branch ctx e2 e3 pos =
 
 and typeof_bop ctx op e1 e2 pos =
   match (op, typeof ctx e1 |> fst |> head, typeof ctx e2 |> fst |> head) with
-  | (Add as op), t1, t2 | (Mult as op), t1, t2 ->
+  | (Add as op), t1, t2
+  | (Subt as op), t1, t2
+  | (Mult as op), t1, t2
+  | (Div as op), t1, t2
+  | (Mod as op), t1, t2 ->
       typeof_bop_int ctx op t1 t2 pos
   | Eq, t1, t2 -> unify_bop ctx t1 t2 TInt TBool pos
 
 and typeof_bop_int ctx op t1 t2 pos =
   match op with
-  | Add | Mult -> unify_bop ctx t1 t2 TInt TInt pos
+  | Add | Subt | Mult | Div | Mod -> unify_bop ctx t1 t2 TInt TInt pos
   | Eq -> assert false
 
 and typeof_let ctx name binding in_body =

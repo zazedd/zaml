@@ -30,7 +30,10 @@
 %token BAR
 
 %token PLUS
+%token MINUS
 %token MULT
+%token DIV
+%token MODULUS
 %token EQ
 
 %token TRUE
@@ -55,9 +58,7 @@ prog:
 
 expr:
   | e = simple_expr { e }
-  | e1 = expr; PLUS; e2 = expr { { expr = Bop (Add, e1, e2); pos = position ($loc, $loc(e2)) } }
-  | e1 = expr; MULT; e2 = expr { { expr = Bop (Mult, e1, e2); pos = position ($loc, $loc(e2)) } }
-  | e1 = expr; EQ; e2 = expr { { expr = Bop (Eq, e1, e2); pos = position ($loc, $loc(e2)) } }
+  | e1 = expr; op = bop; e2 = expr { { expr = Bop (op, e1, e2); pos = position ($loc, $loc(e2)) } }
   | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; SEMICOLON? {
     {
       expr = Let { name; binding = { expr = Lambda { vars; body = b }; pos = position ($loc, $loc(b)) }; in_body = None }; pos = position ($loc, $loc(b))
@@ -91,6 +92,15 @@ expr:
   | e = simple_expr; es = simple_expr+; SEMICOLON? { make_apply [] (position ($loc, $loc(es))) e es }
   ;
 
+bop:
+  | PLUS { Add }
+  | MINUS { Subt }
+  | MULT { Mult }
+  | DIV { Div }
+  | MODULUS { Mod }
+  | EQ { Eq }
+  ;
+
 simple_expr:
   | i = INT { { expr = Int i; pos = position ($loc, $loc(i)) } }
   | x = IDENT { { expr = Var x; pos = position ($loc, $loc(x)) } }
@@ -98,4 +108,4 @@ simple_expr:
   | TRUE { { expr = Bool true; pos = position ($loc, $loc($1)) } }
   | FALSE { { expr = Bool false; pos = position ($loc, $loc($1)) } }
   | LPAREN; e = expr; RPAREN { e }
-;
+  ;

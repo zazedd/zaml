@@ -20,14 +20,17 @@ rule read =
   | newl { new_line read lexbuf }
   | ";" { SEMICOLON }
   | "+" { PLUS }
+  | "-" { MINUS }
   | "*" { MULT }
+  | "/" { DIV }
+  | "%" { MODULUS }
+  | "=" { EQUALS }
+  | "==" { EQ }
   | "(" { LPAREN }
   | ")" { RPAREN }
   | "true" { TRUE }
   | "false" { FALSE }
   | "let" { LET }
-  | "=" { EQUALS }
-  | "==" { EQ }
   | "in" { IN }
   | "if" { IF }
   | "then" { THEN }

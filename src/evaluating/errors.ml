@@ -11,5 +11,11 @@ let op_error () =
 let partial_app_error () =
   RuntimeError "Partial application not allowed yet" |> raise
 
+let too_many_args num =
+  RuntimeError
+    (Format.sprintf
+       "Too many arguments, the function only requires %d arguments." num)
+  |> raise
+
 let app_error () =
   RuntimeError "First parameter of application is not a function" |> raise
