@@ -6,7 +6,7 @@ open Typing.Typecheck
 open Evaluating.Env
 open Evaluating.Eval
 
-let run file =
+let run file t_ctx e_ctx =
   let lines = from_file file in
   try
     let ast_list = lines |> parse in
@@ -15,7 +15,7 @@ let run file =
         let t, t_ctx = type_check acc a in
         "- : " ^ string_of_typ t |> print_endline;
         Ctx.merge (fun _ _ x -> x) acc t_ctx)
-      Ctx.empty ast_list
+      t_ctx ast_list
     |> ignore;
     List.fold_left
       (fun acc a ->
@@ -23,7 +23,7 @@ let run file =
         let str = if is_value e' then " = " ^ string_of_val e' else "" in
         print_endline str;
         ECtx.merge (fun _ _ x -> x) acc e_ctx')
-      ECtx.empty ast_list
+      e_ctx ast_list
     |> ignore
   with LexingError e | ParsingError e ->
     print_endline e;

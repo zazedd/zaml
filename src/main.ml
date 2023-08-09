@@ -8,7 +8,9 @@ let handle_args () =
   | 2 -> (
       let arg = Sys.argv.(1) in
       match Filename.extension arg with
-      | ".zml" -> Interpreter.Interp.run arg
+      | ".zml" ->
+          let t_ctx, e_ctx = stdlib_ctx () in
+          Interpreter.Interp.run arg t_ctx e_ctx
       | _ -> failwith "Please only provide .zml files")
   | _ -> failwith "Too many arguments"
 
