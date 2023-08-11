@@ -16,6 +16,10 @@ and expr = { expr : t; pos : pos }
 
 let get_expr e = e.expr
 
+let get_let_name = function
+  | Let { name; _ } -> "val " ^ name ^ " : "
+  | _ -> "- : "
+
 let position
     ((starts, ends) :
       (Lexing.position * Lexing.position) * (Lexing.position * Lexing.position))

@@ -2,18 +2,6 @@ open Ast.Parsed
 open Env
 open Errors
 
-let is_value = function
-  | VUnit | VInt _ | VChar _ | VString _ | VBool _ -> true
-  | _ -> false
-
-let string_of_val = function
-  | VUnit -> "()"
-  | VInt i -> string_of_int i
-  | VChar c -> "'" ^ String.make 1 c ^ "'"
-  | VString s -> "\"" ^ s ^ "\""
-  | VBool b -> string_of_bool b
-  | Closure _ -> not_a_value ()
-
 let lookup ctx v =
   try (ECtx.find v ctx, ctx) with Not_found -> unbound_variable v
 

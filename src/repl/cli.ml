@@ -1,10 +1,10 @@
-open Ast.Typed
 open Typing.Env
 open Typing.Errors
 open Typing.Typecheck
 open Evaluating.Env
 open Evaluating.Eval
 open Evaluating.Errors
+open Evaluating.Common
 open Parsing.Parse
 open Parsing.Errors
 
@@ -15,7 +15,7 @@ let exit_repl str =
   str |> bold_string |> print_endline;
   exit 0
 
-let rec run t_ctx e_ctx =
+let rec run ctx =
   bold_string "zaml" |> print_string;
   blue_string " # " |> print_string;
   try
@@ -24,30 +24,25 @@ let rec run t_ctx e_ctx =
         exit_repl "See you later cowboy..."
     | str ->
         let ast = str |> from_string |> parse in
-        let t_ctx =
-          (List.fold_left (fun acc a ->
-               let t', t_ctx' = type_check acc a in
-               "- : " ^ string_of_typ t' |> print_string;
-               Ctx.merge (fun _ _ x -> x) acc t_ctx'))
-            t_ctx ast
+        let t_ctx, e_ctx =
+          List.fold_left
+            (fun (acc1, acc2) a ->
+              let t', t_ctx' = type_check acc1 a in
+              let e', e_ctx' = value_of acc2 a in
+              print_eval a t' e';
+              ( Ctx.merge (fun _ _ x -> x) acc1 t_ctx',
+                ECtx.merge (fun _ _ x -> x) acc2 e_ctx' ))
+            ctx ast
         in
-        let e_ctx =
-          (List.fold_left (fun acc a ->
-               let e', e_ctx' = value_of acc a in
-               let str = if is_value e' then " = " ^ string_of_val e' else "" in
-               print_endline str;
-               ECtx.merge (fun _ _ x -> x) acc e_ctx'))
-            e_ctx ast
-        in
-        run t_ctx e_ctx
+        run (t_ctx, e_ctx)
   with
   | End_of_file -> exit_repl "\nSee you later cowboy..."
   | TypeError e | OccurCheck e ->
       print_endline ("Error: " ^ e);
-      run t_ctx e_ctx
+      run ctx
   | RuntimeError e ->
       print_endline ("\nError: " ^ e);
-      run t_ctx e_ctx
+      run ctx
   | ParsingError e | LexingError e ->
       print_endline e;
-      run t_ctx e_ctx
+      run ctx

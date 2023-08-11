@@ -5,6 +5,11 @@
     | [] -> failwith "precondition violated"
     | [e'] -> { expr = App (e, (e' :: acc) |> List.rev); pos }
 	  | h :: ((_ :: _) as t) -> make_apply (h :: acc) pos e t
+
+  let make_expr e1 e2 =
+    match e2 with
+    | Some e -> e1 :: e
+    | None -> [e1]
 %}
 
 %token <int> INT
@@ -57,43 +62,47 @@
 %%
 
 prog:
-  | e = expr+; EOF { e }
+  | e = expr_semicolon; EOF { e }
+  ;
+
+expr_semicolon:
+  | e1 = expr; SEMICOLON?; e2 = expr+? { make_expr e1 e2 }
   ;
 
 expr:
   | e = simple_expr { e }
   | e1 = expr; op = bop; e2 = expr { { expr = Bop (op, e1, e2); pos = position ($loc, $loc(e2)) } }
-  | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; SEMICOLON? {
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; {
     {
       expr = Let { name; binding = { expr = Lambda { vars; body = b }; pos = position ($loc, $loc(b)) }; in_body = None }; pos = position ($loc, $loc(b))
     }
   }
-  | LET; name = IDENT; EQUALS; binding = expr; SEMICOLON? {
+  | LET; name = IDENT; EQUALS; binding = expr; {
     {
       expr = Let { name; binding; in_body = None }; pos = position ($loc, $loc(binding))
     }
   }
-  | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; IN; body = expr; SEMICOLON? {
+  | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; IN; body = expr; {
     {
-      expr = Let { name; binding = { expr = Lambda { vars; body = b }; pos = position ($loc, $loc(b)) }; in_body = Some body }; pos = position ($loc, $loc($8))
+      expr = Let { name; binding = { expr = Lambda { vars; body = b }; pos = position ($loc, $loc(b)) }; in_body = Some body }; pos = position ($loc, $loc(body))
     }
   }
-  | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr; SEMICOLON? {
+  | LET; name = IDENT; EQUALS; binding = expr; IN; body = expr; {
     {
-      expr = Let { name; binding; in_body = Some body }; pos = position ($loc, $loc($7))
+      expr = Let { name; binding; in_body = Some body }; pos = position ($loc, $loc(body))
     }
   }
-  | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr; SEMICOLON? {
+  | IF; b = expr ; THEN; e1 = expr; ELSE; e2 = expr; {
     {
-      expr = If (b, e1, e2); pos = position ($loc, $loc($7))
+      expr = If (b, e1, e2); pos = position ($loc, $loc(e2))
     }
   }
-  | FUN; vars = list(IDENT); ARROW; body = expr; SEMICOLON?; {
+  | FUN; vars = list(IDENT); ARROW; body = expr; {
     {
       expr = Lambda { vars; body }; pos = position ($loc, $loc(body))
     }
   }
-  | e = simple_expr; es = simple_expr+; SEMICOLON? { make_apply [] (position ($loc, $loc(es))) e es }
+  | e = simple_expr; es = simple_expr+; { make_apply [] (position ($loc, $loc(es))) e es }
   ;
 
 bop:
