@@ -31,6 +31,7 @@ dune runtest
 
 -> Next-up
 
+- [ ] 'a list
 - [ ] Better Syntax Errors
   - [x] Line Positions
   - [ ] Character Positions
@@ -58,9 +59,9 @@ dune runtest
     - [x] ==
     - [x] !=
   - [ ] Int ops
-    - [x] +
     - [x] -
-    - [x] *
+    - [x] -
+    - [x] -
     - [x] /
     - [x] %
     - [ ] > , =>
