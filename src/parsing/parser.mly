@@ -5,11 +5,6 @@
     | [] -> failwith "precondition violated"
     | [e'] -> { expr = App (e, (e' :: acc) |> List.rev); pos }
 	  | h :: ((_ :: _) as t) -> make_apply (h :: acc) pos e t
-
-  let make_expr e1 e2 =
-    match e2 with
-    | Some e -> e1 :: e
-    | None -> [e1]
 %}
 
 %token <int> INT
@@ -62,11 +57,11 @@
 %%
 
 prog:
-  | e = expr_semicolon; EOF { e }
+  | e = expr_semicolon+; EOF { e }
   ;
 
 expr_semicolon:
-  | e1 = expr; SEMICOLON?; e2 = expr+? { make_expr e1 e2 }
+  | e = expr; SEMICOLON?; { e }
   ;
 
 expr:
