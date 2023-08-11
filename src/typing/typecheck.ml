@@ -87,6 +87,7 @@ and if_branch ctx e2 e3 pos =
 
 and typeof_bop ctx op e1 e2 pos =
   match (op, typeof ctx e1 |> fst |> head, typeof ctx e2 |> fst |> head) with
+  | Add, (TList _ as a), (TList _ as b) -> unify_bop ctx a b (TList a) pos
   | (Add as op), t1, t2
   | (Subt as op), t1, t2
   | (Mult as op), t1, t2

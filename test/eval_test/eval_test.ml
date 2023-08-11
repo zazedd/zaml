@@ -120,6 +120,15 @@ let%test "list tests" =
       true
   | _ -> false
 
+let%test "list append" =
+  match
+    ( test "[1; 2] + [3; 4]" ECtx.empty |> string_of_val,
+      test "[\"str\"; \"str2\"] + [\"str3\"; \"str4\"]" ECtx.empty
+      |> string_of_val )
+  with
+  | "[1; 2; 3; 4]", "[\"str\"; \"str2\"; \"str3\"; \"str4\"]" -> true
+  | _ -> false
+
 let () =
   "Eval tests completed. Time elapsed: "
   ^ string_of_float ((Sys.time () -. start_time) *. 1000.)

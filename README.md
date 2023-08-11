@@ -32,6 +32,7 @@ dune runtest
 -> Next-up
 
 - [x] 'a list
+    - [ ] :: (cons)
 - [ ] Better Syntax Errors
   - [x] Line Positions
   - [ ] Character Positions
@@ -68,6 +69,9 @@ dune runtest
     - [ ] <, =<
   - [ ] String ops
     - [x] ++ (string concat)
+  - [ ] 'a list
+    - [x] + (append)
+    - [ ] :: (cons)
 - [ ] Garbage Collection
 
 -> Types

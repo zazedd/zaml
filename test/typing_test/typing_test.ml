@@ -260,6 +260,11 @@ let%test "invalid list" =
   | exception TypeError _ -> true
   | _ -> false
 
+let%test "invalid list append" =
+  match test "[1; 2] + ['a'; 'b']" Ctx.empty with
+  | exception TypeError _ -> true
+  | _ -> false
+
 let () =
   "Typing tests completed. Time elapsed: "
   ^ string_of_float ((Sys.time () -. start_time) *. 1000.)
