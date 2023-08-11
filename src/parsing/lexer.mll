@@ -33,6 +33,7 @@ rule read =
   | "*" { MULT }
   | "/" { DIV }
   | "%" { MODULUS }
+  | "::" { CONS }
   | "=" { EQUALS }
   | "==" { EQ }
   | "!=" { INEQ }

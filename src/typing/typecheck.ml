@@ -88,6 +88,7 @@ and if_branch ctx e2 e3 pos =
 and typeof_bop ctx op e1 e2 pos =
   match (op, typeof ctx e1 |> fst |> head, typeof ctx e2 |> fst |> head) with
   | Add, (TList _ as a), (TList _ as b) -> unify_bop ctx a b (TList a) pos
+  | Cons, t1, (TList t2 as b) -> unify_bop ctx t1 t2 b pos
   | (Add as op), t1, t2
   | (Subt as op), t1, t2
   | (Mult as op), t1, t2
@@ -96,11 +97,12 @@ and typeof_bop ctx op e1 e2 pos =
       typeof_bop_int ctx op t1 t2 pos
   | Concat, t1, t2 -> unify_bop ctx t1 t2 TString pos
   | Eq, t1, t2 | Ineq, t1, t2 -> typeof_bop_equalities ctx t1 t2 pos
+  | Cons, t1, t2 -> type_error t1 t2 pos
 
 and typeof_bop_int ctx op t1 t2 pos =
   match op with
   | Add | Subt | Mult | Div | Mod -> unify_bop ctx t1 t2 TInt pos
-  | Concat | Eq | Ineq -> assert false
+  | Concat | Cons | Eq | Ineq -> assert false
 
 and typeof_bop_equalities ctx t1 t2 pos =
   match (t1 |> head, t2 |> head) with

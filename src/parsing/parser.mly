@@ -45,6 +45,7 @@
 %token MULT
 %token DIV
 %token MODULUS
+%token CONS
 %token EQ
 %token INEQ
 
@@ -115,6 +116,7 @@ bop:
   | MULT { Mult }
   | DIV { Div }
   | MODULUS { Mod }
+  | CONS { Cons }
   | EQ { Eq }
   | INEQ { Ineq }
   ;

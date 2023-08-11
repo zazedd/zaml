@@ -31,8 +31,6 @@ dune runtest
 
 -> Next-up
 
-- [x] 'a list
-    - [ ] :: (cons)
 - [ ] Better Syntax Errors
   - [x] Line Positions
   - [ ] Character Positions
@@ -60,18 +58,19 @@ dune runtest
     - [x] ==
     - [x] !=
   - [ ] Int ops
-    - [x] +
     - [x] -
-    - [x] *
+    - [x] -
+    - [x] -
     - [x] /
     - [x] %
     - [ ] > , =>
     - [ ] <, =<
   - [ ] String ops
     - [x] ++ (string concat)
-  - [ ] 'a list
-    - [x] + (append)
-    - [ ] :: (cons)
+    - [ ] I don't know yet
+  - [x] 'a list
+    - [x] - (append)
+    - [x] :: (cons)
 - [ ] Garbage Collection
 
 -> Types

@@ -1,6 +1,6 @@
 open Common
 
-type op = Add | Subt | Mult | Div | Mod | Concat | Eq | Ineq
+type op = Add | Subt | Mult | Div | Mod | Cons | Concat | Eq | Ineq
 
 type t =
   | Const of vals
