@@ -21,6 +21,7 @@ and eval_const ctx = function
   | Char c -> (VChar c, ctx)
   | String s -> (VString s, ctx)
   | Bool b -> (VBool b, ctx)
+  | List l -> (VList (List.map (fun a -> value_of ctx a |> fst) l), ctx)
 
 and eval_let ctx name binding in_body =
   let v1, newctx = value_of ctx binding in

@@ -99,6 +99,27 @@ let%test "not equals" =
   | "false", "true", "false", "true", "false", "true", "false", "true" -> true
   | _ -> false
 
+let%test "list tests" =
+  let ctx =
+    Parsing.Parse.from_string "let id a = a"
+    |> Parsing.Parse.parse
+    |> List.fold_left
+         (fun acc a ->
+           let _, newctx = Evaluating.Eval.value_of acc a in
+           ECtx.merge (fun _ _ x -> x) acc newctx)
+         ECtx.empty
+  in
+  match
+    ( test "[id 1; id 3]" ctx |> string_of_val,
+      test "[id \"str\"; id \"str2\"]" ctx |> string_of_val,
+      test "[id 'a'; id 'b']" ctx |> string_of_val,
+      test "[id true; id false]" ctx |> string_of_val,
+      test "[(fun x -> x) 2; (fun x -> x + 3) 2]" ctx |> string_of_val )
+  with
+  | "[1; 3]", "[\"str\"; \"str2\"]", "['a'; 'b']", "[true; false]", "[2; 5]" ->
+      true
+  | _ -> false
+
 let () =
   "Eval tests completed. Time elapsed: "
   ^ string_of_float ((Sys.time () -. start_time) *. 1000.)

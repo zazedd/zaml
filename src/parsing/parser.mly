@@ -5,6 +5,12 @@
     | [] -> failwith "precondition violated"
     | [e'] -> { expr = App (e, (e' :: acc) |> List.rev); pos }
 	  | h :: ((_ :: _) as t) -> make_apply (h :: acc) pos e t
+
+	(* let make_list lst last = *)
+	(*   match lst with *)
+	(*   | Some l -> l @ [last] *)
+	(*   | _ -> [last] *)
+
 %}
 
 %token <int> INT
@@ -26,6 +32,8 @@
 %token SEMICOLON
 %token LPAREN
 %token RPAREN
+%token LSQBRACKET
+%token RSQBRACKET
 %token EQUALS
 %token COLON
 %token DOTDOT
@@ -65,7 +73,7 @@ expr_semicolon:
   ;
 
 expr:
-  | e = simple_expr { e }
+  | e = const { e }
   | e1 = expr; op = bop; e2 = expr { { expr = Bop (op, e1, e2); pos = position ($loc, $loc(e2)) } }
   | LET; name = IDENT; vars = list(IDENT); EQUALS; b = expr; {
     {
@@ -97,7 +105,7 @@ expr:
       expr = Lambda { vars; body }; pos = position ($loc, $loc(body))
     }
   }
-  | e = simple_expr; es = simple_expr+; { make_apply [] (position ($loc, $loc(es))) e es }
+  | e = const; es = const+; { make_apply [] (position ($loc, $loc(es))) e es }
   ;
 
 bop:
@@ -111,13 +119,23 @@ bop:
   | INEQ { Ineq }
   ;
 
-simple_expr:
-  | i = INT { { expr = Const (Int i); pos = position ($loc, $loc(i)) } }
-  | c = CHAR { { expr = Const (Char c); pos = position ($loc, $loc(c)) } }
-  | s = STR { { expr = Const (String s); pos = position ($loc, $loc(s)) } }
+const:
+  | e = simple_expr { { expr = Const e; pos = position ($loc, $loc(e)) } }
   | x = IDENT { { expr = Var x; pos = position ($loc, $loc(x)) } }
-  | UNIT { { expr = Const Unit; pos = position ($loc, $loc($1)) } }
-  | TRUE { { expr = Const (Bool true); pos = position ($loc, $loc($1)) } }
-  | FALSE { { expr = Const (Bool false); pos = position ($loc, $loc($1)) } }
+  | LSQBRACKET; lst = expr_list; RSQBRACKET { { expr = Const (List lst); pos = position ($loc, $loc($3)) } }
   | LPAREN; e = expr; RPAREN { e }
+  ;
+
+expr_list:
+  | e = expr { [e] }
+  | e = expr; SEMICOLON; lst = expr_list { e :: lst }
+  ;
+
+simple_expr:
+  | i = INT { Int i }
+  | c = CHAR { Char c }
+  | s = STR { String s }
+  | UNIT { Unit }
+  | TRUE { Bool true }
+  | FALSE { Bool false }
   ;

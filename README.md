@@ -31,7 +31,7 @@ dune runtest
 
 -> Next-up
 
-- [ ] 'a list
+- [x] 'a list
 - [ ] Better Syntax Errors
   - [x] Line Positions
   - [ ] Character Positions
@@ -86,5 +86,5 @@ dune runtest
   - [x] Var
   - [x] Arrow (x -> y)
   - [ ] Product (tuples)
-  - [ ] 'a list
+  - [x] 'a list
   - [ ] 'a array

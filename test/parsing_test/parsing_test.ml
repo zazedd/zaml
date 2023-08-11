@@ -16,6 +16,23 @@ let%test "string" =
 let%test "bool" =
   match test "true" with Const (Bool true) -> true | _ -> false
 
+let%test "int list" =
+  match test "[1; 2]" with
+  | Const (List [ { expr = Const (Int 1); _ }; { expr = Const (Int 2); _ } ]) ->
+      true
+  | _ -> false
+
+let%test "string list" =
+  match test "[\"str\"; \"str2\"]" with
+  | Const
+      (List
+        [
+          { expr = Const (String "str"); _ };
+          { expr = Const (String "str2"); _ };
+        ]) ->
+      true
+  | _ -> false
+
 let%test "bop+" =
   match test "1 + 2" with
   | Bop (Add, { expr = Const (Int 1); _ }, { expr = Const (Int 2); _ }) -> true

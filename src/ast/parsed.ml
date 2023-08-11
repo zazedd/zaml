@@ -1,7 +1,6 @@
 open Common
 
 type op = Add | Subt | Mult | Div | Mod | Concat | Eq | Ineq
-type vals = Unit | Int of int | Char of char | String of string | Bool of bool
 
 type t =
   | Const of vals
@@ -11,6 +10,14 @@ type t =
   | Let of { name : variable; binding : expr; in_body : expr option }
   | Lambda of { vars : variable list; body : expr }
   | App of expr * expr list
+
+and vals =
+  | Unit
+  | Int of int
+  | Char of char
+  | String of string
+  | Bool of bool
+  | List of expr list
 
 and expr = { expr : t; pos : pos }
 
@@ -33,13 +40,6 @@ let position
     ending = ends.pos_cnum + 1;
   }
 
-let string_of_const = function
-  | Unit -> "unit"
-  | Int i -> "int : " ^ string_of_int i
-  | Char c -> "char : '" ^ String.make 1 c ^ "'"
-  | String s -> "string : " ^ s
-  | Bool b -> "bool : " ^ string_of_bool b
-
 let rec string_of_ast = function
   | { expr = Const c; _ } -> string_of_const c
   | { expr = Var s; _ } -> "var name : " ^ s
@@ -53,3 +53,14 @@ let rec string_of_ast = function
       "App : " ^ string_of_ast e1 ^ " and "
       ^ List.fold_left (fun acc a -> acc ^ string_of_ast a) "" e2
   | _ -> assert false
+
+and string_of_const = function
+  | Unit -> "unit"
+  | Int i -> "int : " ^ string_of_int i
+  | Char c -> "char : '" ^ String.make 1 c ^ "'"
+  | String s -> "string : " ^ s
+  | Bool b -> "bool : " ^ string_of_bool b
+  | List l ->
+      "list : "
+      ^ List.fold_left (fun acc a -> acc ^ string_of_ast a ^ "; ") "[" l
+      ^ "]"

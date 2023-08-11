@@ -24,7 +24,9 @@ let new_arrows ctx' vars t_e =
 
 (* Delayed occurs check to prevent cyclic types. Runs at the end of the typecheck *)
 let rec cycle_free = function
-  | TUnit | TInt | TChar | TString | TBool | TVar { contents = Unbound _ } -> ()
+  | TUnit | TInt | TChar | TString | TBool | TList _
+  | TVar { contents = Unbound _ } ->
+      ()
   | TVar { contents = Link ty } -> cycle_free ty
   | TArrow (_, _, ls) when ls.new_level = marked_level ->
       occur_error "cycle_free: Variable occurs inside its definition"
@@ -36,7 +38,7 @@ let rec cycle_free = function
       ls.new_level <- level
 
 let rec typeof ctx = function
-  | { expr = Const c; _ } -> typeof_const ctx c
+  | { expr = Const c; pos } -> typeof_const ctx pos c
   | { expr = Var x; pos } -> lookup ctx x pos
   | { expr = If (e1, e2, e3); pos } -> typeof_if ctx e1 e2 e3 pos
   | { expr = Bop (op, e1, e2); pos } -> typeof_bop ctx op e1 e2 pos
@@ -45,12 +47,24 @@ let rec typeof ctx = function
   | { expr = Lambda { vars; body }; _ } -> typeof_lambda ctx vars body
   | { expr = App (e1, e2); pos } -> typeof_app ctx e1 e2 pos
 
-and typeof_const ctx = function
+and typeof_const ctx pos = function
   | Unit -> (TUnit, ctx)
   | Int _ -> (TInt, ctx)
   | Char _ -> (TChar, ctx)
   | String _ -> (TString, ctx)
   | Bool _ -> (TBool, ctx)
+  | List l -> (TList (typeof_list ctx None l pos |> fst), ctx)
+
+and typeof_list ctx init l pos =
+  match init with
+  | None ->
+      let t, _ = typeof ctx (List.hd l) in
+      typeof_list ctx (Some t) (List.tl l) pos
+  | Some t when List.length l > 0 ->
+      let t', _ = typeof ctx (List.hd l) in
+      if t <> t' then type_error t t' pos;
+      typeof_list ctx init (List.tl l) pos
+  | _ -> (Option.get init, ctx)
 
 and typeof_if ctx e1 e2 e3 pos =
   match typeof ctx e1 |> fst |> head with

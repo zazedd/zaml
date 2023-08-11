@@ -14,6 +14,13 @@ let test str ctx =
 let%test "unit" = match test "()" Ctx.empty with TUnit -> true | _ -> false
 let%test "int" = match test "10" Ctx.empty with TInt -> true | _ -> false
 let%test "bool" = match test "true" Ctx.empty with TBool -> true | _ -> false
+
+let%test "string" =
+  match test "\"str\"" Ctx.empty with TString -> true | _ -> false
+
+let%test "list" =
+  match test "[1; 2; 3]" Ctx.empty with TList TInt -> true | _ -> false
+
 let%test "bop+" = match test "1 + 2" Ctx.empty with TInt -> true | _ -> false
 let%test "bop*" = match test "1 * 2" Ctx.empty with TInt -> true | _ -> false
 
@@ -245,6 +252,11 @@ let%test "unify unbound vars with not equals2" =
   match
     test "let f a b = if a != b then a + 1 else b ++ \"test\"" Ctx.empty
   with
+  | exception TypeError _ -> true
+  | _ -> false
+
+let%test "invalid list" =
+  match test "let id x = x in [id 4; id \"str\"]" Ctx.empty with
   | exception TypeError _ -> true
   | _ -> false
 

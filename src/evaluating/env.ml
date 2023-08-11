@@ -12,12 +12,5 @@ and value =
   | VChar of char
   | VString of string
   | VBool of bool
+  | VList of value list
   | Closure of { vars : variable list; body : expr; context : ectx }
-
-module GenCtx = Map.Make (struct
-  type t = string * int
-
-  let compare = compare
-end)
-
-type genctx = value GenCtx.t

@@ -38,6 +38,8 @@ rule read =
   | "!=" { INEQ }
   | "(" { LPAREN }
   | ")" { RPAREN }
+  | "[" { LSQBRACKET }
+  | "]" { RSQBRACKET }
   | "true" { TRUE }
   | "false" { FALSE }
   | "let" { LET }
