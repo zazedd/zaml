@@ -1,5 +1,6 @@
 open Evaluating.Env
 open Evaluating.Common
+open Evaluating.Errors
 
 let start_time = Sys.time ()
 let run () = ()
@@ -135,6 +136,16 @@ let%test "list append" =
       test "\"str\" :: [\"str2\"; \"str3\"]" ECtx.empty |> string_of_val )
   with
   | "[1; 2; 3]", "[\"str\"; \"str2\"; \"str3\"]" -> true
+  | _ -> false
+
+let%test "list range" =
+  match test "1 .. 5" ECtx.empty |> string_of_val with
+  | "[1; 2; 3; 4; 5]" -> true
+  | _ -> false
+
+let%test "list range error" =
+  match test "5 .. 1" ECtx.empty |> string_of_val with
+  | exception RuntimeError _ -> true
   | _ -> false
 
 let () =

@@ -21,6 +21,16 @@ let%test "string" =
 let%test "list" =
   match test "[1; 2; 3]" Ctx.empty with TList TInt -> true | _ -> false
 
+let%test "empty list" =
+  match test "[]" Ctx.empty with
+  | TList (TVar { contents = Unbound ("'a", 1) }) -> true
+  | _ -> false
+
+let%test "empty list unify" =
+  match test "1 :: []" Ctx.empty with
+  | TList (TVar { contents = Link TInt }) -> true
+  | _ -> false
+
 let%test "bop+" = match test "1 + 2" Ctx.empty with TInt -> true | _ -> false
 let%test "bop*" = match test "1 * 2" Ctx.empty with TInt -> true | _ -> false
 

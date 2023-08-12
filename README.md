@@ -48,7 +48,7 @@ dune runtest
 - [x] Partial Applications
 - [ ] Match expressions
 - [ ] Algebraic effects
-- [ ] Ranges (1..31 -> [1; 2; ... 30; 31])
+- [x] Ranges (1..31 -> [1; 2; ... 30; 31])
 - [ ] Standard library
   - [ ] Universal `print` function
   - [x] ! (or `not`, function for booleans)

@@ -58,8 +58,12 @@ and typeof_const ctx pos = function
 and typeof_list ctx init l pos =
   match init with
   | None ->
-      let t, _ = typeof ctx (List.hd l) in
-      typeof_list ctx (Some t) (List.tl l) pos
+      if l = [] then
+        let t = newvar () in
+        (t, ctx)
+      else
+        let t, _ = typeof ctx (List.hd l) in
+        typeof_list ctx (Some t) (List.tl l) pos
   | Some t when List.length l > 0 ->
       let t', _ = typeof ctx (List.hd l) in
       if t <> t' then type_error t t' pos;

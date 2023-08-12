@@ -1,16 +1,20 @@
 %{
   open Ast.Parsed
+  open Evaluating.Errors
 
   let rec make_apply acc (pos : Ast.Common.pos) e = function
     | [] -> failwith "precondition violated"
     | [e'] -> { expr = App (e, (e' :: acc) |> List.rev); pos }
 	  | h :: ((_ :: _) as t) -> make_apply (h :: acc) pos e t
 
-	(* let make_list lst last = *)
-	(*   match lst with *)
-	(*   | Some l -> l @ [last] *)
-	(*   | _ -> [last] *)
+  let make_list = function
+    | None -> List []
+    | Some lst -> List lst
 
+  let rec make_range i1 i2 acc pos =
+    if i1 > i2 then range_error ()
+    else if i1 = i2 then List ( { expr = Const (Int i1); pos = pos } :: acc)
+    else make_range i1 (i2 - 1) ( { expr = Const (Int i2); pos = pos } :: acc) pos
 %}
 
 %token <int> INT
@@ -132,7 +136,8 @@ bop:
 const:
   | e = simple_expr { { expr = Const e; pos = position ($loc, $loc(e)) } }
   | x = IDENT { { expr = Var x; pos = position ($loc, $loc(x)) } }
-  | LSQBRACKET; lst = expr_list; RSQBRACKET { { expr = Const (List lst); pos = position ($loc, $loc($3)) } }
+  | LSQBRACKET; lst = expr_list?; RSQBRACKET { { expr = Const (make_list lst); pos = position ($loc, $loc($3)) } }
+  | i1 = INT; DOTDOT; i2 = INT { { expr = Const (make_range i1 i2 [] (position ($loc, $loc(i2)))); pos = position ($loc, $loc(i2)) } }
   | LPAREN; e = expr; RPAREN { e }
   ;
 

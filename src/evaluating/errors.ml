@@ -18,3 +18,6 @@ let too_many_args num =
 
 let app_error () =
   RuntimeError "First parameter of application is not a function" |> raise
+
+let range_error () =
+  RuntimeError "Range can't start with the biggest item" |> raise
