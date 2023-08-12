@@ -36,6 +36,10 @@ rule read =
   | "::" { CONS }
   | "=" { EQUALS }
   | "==" { EQ }
+  | "<" { LT }
+  | "<=" { LTE }
+  | ">" { BT }
+  | ">=" { BTE }
   | "!=" { INEQ }
   | "(" { LPAREN }
   | ")" { RPAREN }

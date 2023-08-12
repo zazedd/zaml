@@ -48,6 +48,10 @@
 %token CONS
 %token EQ
 %token INEQ
+%token LT
+%token LTE
+%token BT
+%token BTE
 
 %token TRUE
 %token FALSE
@@ -119,6 +123,10 @@ bop:
   | CONS { Cons }
   | EQ { Eq }
   | INEQ { Ineq }
+  | LT { Lt }
+  | LTE { Lte }
+  | BT { Bt }
+  | BTE { Bte }
   ;
 
 const:

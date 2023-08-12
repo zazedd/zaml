@@ -51,6 +51,10 @@ and eval_bop ctx op e1 e2 =
   | Cons, a, VList b -> (VList (a :: b), ctx)
   | Eq, a, b -> (VBool (a = b), ctx)
   | Ineq, a, b -> (VBool (a <> b), ctx)
+  | Lt, a, b -> (VBool (a < b), ctx)
+  | Lte, a, b -> (VBool (a <= b), ctx)
+  | Bt, a, b -> (VBool (a > b), ctx)
+  | Bte, a, b -> (VBool (a >= b), ctx)
   | _ -> op_error ()
 
 and follow_lambda vars body ctx =

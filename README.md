@@ -57,14 +57,14 @@ dune runtest
   - [x] Universal ops
     - [x] ==
     - [x] !=
+    - [x] > , =>
+    - [x] <, =<
   - [ ] Int ops
+    - [x] +
     - [x] -
-    - [x] -
-    - [x] -
+    - [x] *
     - [x] /
     - [x] %
-    - [ ] > , =>
-    - [ ] <, =<
   - [ ] String ops
     - [x] ++ (string concat)
     - [ ] I don't know yet

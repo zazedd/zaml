@@ -96,13 +96,19 @@ and typeof_bop ctx op e1 e2 pos =
   | (Mod as op), t1, t2 ->
       typeof_bop_int ctx op t1 t2 pos
   | Concat, t1, t2 -> unify_bop ctx t1 t2 TString pos
-  | Eq, t1, t2 | Ineq, t1, t2 -> typeof_bop_equalities ctx t1 t2 pos
+  | Eq, t1, t2
+  | Ineq, t1, t2
+  | Lt, t1, t2
+  | Lte, t1, t2
+  | Bt, t1, t2
+  | Bte, t1, t2 ->
+      typeof_bop_equalities ctx t1 t2 pos
   | Cons, t1, t2 -> type_error t1 t2 pos
 
 and typeof_bop_int ctx op t1 t2 pos =
   match op with
   | Add | Subt | Mult | Div | Mod -> unify_bop ctx t1 t2 TInt pos
-  | Concat | Cons | Eq | Ineq -> assert false
+  | Concat | Cons | Eq | Ineq | Lt | Lte | Bt | Bte -> assert false
 
 and typeof_bop_equalities ctx t1 t2 pos =
   match (t1 |> head, t2 |> head) with
