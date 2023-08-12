@@ -6,6 +6,7 @@ type op =
   | Mult
   | Div
   | Mod
+  | LstAppend
   | Cons
   | Concat
   | Eq

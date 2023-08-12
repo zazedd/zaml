@@ -69,7 +69,7 @@ dune runtest
     - [x] ++ (string concat)
     - [ ] I don't know yet
   - [x] 'a list
-    - [x] - (append)
+    - [x] @ (append)
     - [x] :: (cons)
 - [ ] Garbage Collection
 

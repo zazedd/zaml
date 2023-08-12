@@ -123,14 +123,14 @@ let%test "list tests" =
 
 let%test "list append" =
   match
-    ( test "[1; 2] + [3; 4]" ECtx.empty |> string_of_val,
-      test "[\"str\"; \"str2\"] + [\"str3\"; \"str4\"]" ECtx.empty
+    ( test "[1; 2] @ [3; 4]" ECtx.empty |> string_of_val,
+      test "[\"str\"; \"str2\"] @ [\"str3\"; \"str4\"]" ECtx.empty
       |> string_of_val )
   with
   | "[1; 2; 3; 4]", "[\"str\"; \"str2\"; \"str3\"; \"str4\"]" -> true
   | _ -> false
 
-let%test "list append" =
+let%test "list cons" =
   match
     ( test "1 :: [2; 3]" ECtx.empty |> string_of_val,
       test "\"str\" :: [\"str2\"; \"str3\"]" ECtx.empty |> string_of_val )
