@@ -60,9 +60,9 @@ dune runtest
     - [x] > , =>
     - [x] <, =<
   - [ ] Int ops
-    - [x] +
     - [x] -
-    - [x] *
+    - [x] -
+    - [x] -
     - [x] /
     - [x] %
   - [ ] String ops

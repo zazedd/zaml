@@ -1,1 +1,5 @@
+let id x = x
+
+let f a b = a @ b
+
 let not a = if a then false else true

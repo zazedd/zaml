@@ -37,8 +37,15 @@ let update_level l = function
 *)
 
 let rec unify init t1 t2 pos =
+  (* string_of_typ2 t1 |> print_endline; *)
+  (* string_of_typ2 t2 |> print_endline; *)
+  (* print_endline ""; *)
   match (head t1, head t2) with
   | t1, t2 when t1 = t2 -> ()
+  | TList t1, TList t2 -> unify init t1 t2 pos
+  | TList (TVar ({ contents = Unbound (_, _) } as var)), t'
+  | t', TList (TVar ({ contents = Unbound (_, _) } as var)) ->
+      unify init (TVar var) t' pos
   | ( (TVar ({ contents = Unbound (_, l1) } as var1) as t1),
       (TVar ({ contents = Unbound (_, l2) } as var2) as t2) ) ->
       if var1 == var2 then ()
@@ -78,10 +85,18 @@ and reset_level t =
       reset_level t2
   | _ -> ()
 
+(* let unify_list t1 t2 pos = *)
+(*   match (head t1, head t2) with *)
+(*   | t1, t2 when t1 = t2 -> () *)
+(*   | t1, t2 -> type_error t1 t2 pos *)
+
 let unify_bop ctx t1 t2 output pos =
   match (t1, t2) with
   | b1, b2 when b1 = b2 -> (output, ctx)
-  | (TVar _ as v), b1 | b1, (TVar _ as v) ->
+  | (TList (TVar _) as v), b1
+  | b1, (TList (TVar _) as v)
+  | (TVar _ as v), b1
+  | b1, (TVar _ as v) ->
       unify v v b1 pos;
       (output, ctx)
   | t1, t2 -> op_error t1 t2 pos

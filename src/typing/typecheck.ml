@@ -94,7 +94,7 @@ and typeof_bop ctx op e1 e2 pos =
   | LstAppend, (TList _ as t1), (TList _ as t2) -> unify_bop ctx t1 t2 t1 pos
   | LstAppend, t1, (TList _ as t2) -> unify_bop ctx t1 t2 t2 pos
   | LstAppend, (TList _ as t1), t2 -> unify_bop ctx t1 t2 t1 pos
-  | LstAppend, t1, t2 -> unify_bop ctx t1 t2 (TList (newvar ())) pos
+  | LstAppend, t1, t2 -> unify_bop ctx (TList t1) (TList t2) t1 pos
   | Cons, t1, (TList t2 as b) -> unify_bop ctx t1 t2 b pos
   | (Add as op), t1, t2
   | (Subt as op), t1, t2
