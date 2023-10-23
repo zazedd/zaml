@@ -3,7 +3,35 @@ A type inferred, statically-typed functional programming language inspired by OC
 
 ## Documentation
 
-- TODO
+### Syntax
+```bnf
+<ident> ::= words
+
+<expr> ::= <const>
+        | <expr> <bop> <expr>
+        | "let" <ident> (<ident>*)? "=" <expr>
+        | "let" <ident> "=" <expr> "in" <expr>
+        | "if" <expr> "then" <expr> "else" <expr>
+        | "fun" <ident>+ "->" <expr>
+        | <const> (<const>)+
+        
+<bop> ::= "+" | "++" | "-" | "*" | "/" | "%" | "@" | "::" | "==" | "!=" | "<" | "<=" | ">" | ">="
+
+<const> ::= <simple_expr>
+         | <ident>
+         | "[" <expr_list>? "]"
+         | int ".." int
+         | "(" <expr> ")"
+
+<expr_list> ::= <expr> (";" <expr_list>)?
+
+<simple_expr> ::= int
+              | char
+              | str
+              | unit
+              | true
+              | false
+```
 
 ## Running
 
